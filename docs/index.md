@@ -1,6 +1,6 @@
 # Documentation
 
-This directory contains documentation for the LiteLLM Rust Acceleration project.
+This directory contains documentation for the Fast LiteLLM Acceleration project.
 
 ## Table of Contents
 

@@ -1,17 +1,17 @@
 # Architecture Guide
 
-Technical implementation details of LiteLLM Rust acceleration.
+Technical implementation details of Fast LiteLLM acceleration.
 
 ## Overview
 
-LiteLLM Rust acceleration provides seamless performance improvements while maintaining full compatibility with the original Python implementation through a layered architecture.
+Fast LiteLLM acceleration provides seamless performance improvements while maintaining full compatibility with the original Python implementation through a layered architecture.
 
 ## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ User Application                                            │
-│ import litellm_rust                                         │
+│ import fast_litellm                                         │
 │ import litellm                                              │
 └─────────────────────────┬───────────────────────────────────┘
                           │
@@ -24,7 +24,7 @@ LiteLLM Rust acceleration provides seamless performance improvements while maint
 └─────────────────────────┬───────────────────────────────────┘
                           │
 ┌─────────────────────────▼───────────────────────────────────┐
-│ Python Integration Layer (litellm_rust)                    │
+│ Python Integration Layer (fast_litellm)                    │
 │ ├── Enhanced Monkeypatching                                │
 │ ├── Feature Flag Management                                │
 │ ├── Performance Monitoring                                 │

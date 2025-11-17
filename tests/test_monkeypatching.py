@@ -13,14 +13,14 @@ def test_monkeypatching():
     
     # First, import the acceleration
     try:
-        import litellm_rust
+        import fast_litellm
         print("✓ LiteLLM Rust Acceleration imported successfully")
     except ImportError as e:
         print(f"✗ Failed to import LiteLLM Rust Acceleration: {e}")
         return False
     
     # Check if Rust acceleration is available
-    if not litellm_rust.RUST_ACCELERATION_AVAILABLE:
+    if not fast_litellm.RUST_ACCELERATION_AVAILABLE:
         print("ℹ Rust acceleration is not available, skipping monkeypatching test")
         return True
     
@@ -47,7 +47,7 @@ def test_monkeypatching():
             print(f"✓ {class_name} found in litellm module (from {module_name})")
             
             # Check if it's from our Rust module
-            if 'litellm_rust' in module_name or 'litellm_token' in module_name or 'litellm_rate_limiter' in module_name or 'litellm_connection_pool' in module_name:
+            if 'fast_litellm' in module_name or '_rust' in module_name or '_rust' in module_name or '_rust' in module_name:
                 print(f"  ℹ {class_name} appears to be from Rust extension")
             else:
                 print(f"  ? {class_name} is from {module_name} (not Rust extension)")

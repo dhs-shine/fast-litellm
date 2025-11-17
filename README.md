@@ -1,28 +1,32 @@
-# LiteLLM Rust Acceleration
+# Fast LiteLLM
 
-[![Build Status](https://github.com/your-username/litellm-rust/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/litellm-rust/actions)
-[![PyPI](https://img.shields.io/pypi/v/litellm-rust.svg)](https://pypi.org/project/litellm-rust/)
+[![PyPI](https://img.shields.io/pypi/v/fast-litellm.svg)](https://pypi.org/project/fast-litellm/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python Versions](https://img.shields.io/pypi/pyversions/fast-litellm.svg)](https://pypi.org/project/fast-litellm/)
 
-High-performance Rust acceleration for [LiteLLM](https://github.com/BerriAI/litellm) components with seamless Python integration.
+High-performance Rust acceleration for [LiteLLM](https://github.com/BerriAI/litellm) - providing 2-20x performance improvements for token counting, routing, rate limiting, and connection management.
 
-## Overview
+## Why Fast LiteLLM?
 
-LiteLLM Rust provides drop-in acceleration for performance-critical LiteLLM operations:
+Fast LiteLLM is a drop-in Rust acceleration layer for LiteLLM that provides significant performance improvements:
 
 - **5-20x faster** token counting with batch processing
 - **3-8x faster** request routing with lock-free data structures
 - **4-12x faster** rate limiting with async support
 - **2-5x faster** connection management
 
-## Quick Start
+Built with PyO3 and Rust, it seamlessly integrates with existing LiteLLM code with zero configuration required.
+
+## Installation
 
 ```bash
-pip install litellm-rust
+pip install fast-litellm
 ```
 
+## Quick Start
+
 ```python
-import litellm_rust  # Automatic acceleration applied
+import fast_litellm  # Automatically accelerates LiteLLM
 import litellm
 
 # All LiteLLM operations now use Rust acceleration where available
@@ -32,6 +36,8 @@ response = litellm.completion(
 )
 ```
 
+That's it! Just import `fast_litellm` before `litellm` and acceleration is automatically applied.
+
 ## Architecture
 
 The acceleration uses PyO3 to create Python extensions from Rust code:
@@ -40,7 +46,7 @@ The acceleration uses PyO3 to create Python extensions from Rust code:
 ┌─────────────────────────────────────────────────────────────┐
 │ LiteLLM Python Package                                      │
 ├─────────────────────────────────────────────────────────────┤
-│ litellm_rust (Python Integration Layer)                    │
+│ fast_litellm (Python Integration Layer)                    │
 │ ├── Enhanced Monkeypatching                                │
 │ ├── Feature Flags & Gradual Rollout                        │
 │ ├── Performance Monitoring                                 │
@@ -54,53 +60,16 @@ The acceleration uses PyO3 to create Python extensions from Rust code:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## Key Features
+## Features
 
-- **Zero Configuration**: Automatic acceleration on import
-- **Production Safe**: Feature flags, monitoring, automatic fallback
+- **Zero Configuration**: Works automatically on import
+- **Production Safe**: Built-in feature flags, monitoring, and automatic fallback to Python
 - **Performance Monitoring**: Real-time metrics and optimization recommendations
-- **Gradual Rollout**: Canary deployments and percentage-based feature rollout
+- **Gradual Rollout**: Support for canary deployments and percentage-based feature rollout
+- **Thread Safe**: Lock-free data structures using DashMap for concurrent operations
+- **Type Safe**: Full Python type hints and type stubs included
 
-## Development
-
-### Prerequisites
-
-- Python 3.8+
-- Rust toolchain (1.70+)
-- LiteLLM (for integration testing)
-
-### Building from Source
-
-```bash
-git clone https://github.com/your-username/litellm-rust.git
-cd litellm-rust
-
-# Quick setup
-./scripts/setup_dev.sh
-
-# Or manual setup
-pip install maturin
-maturin develop
-
-# Run tests
-pytest tests/
-```
-
-### Project Structure
-
-```
-litellm-rust/
-├── litellm-core/           # Advanced routing (Rust)
-├── litellm-token/          # Token counting (Rust)
-├── litellm-connection-pool/# Connection management (Rust)
-├── litellm-rate-limiter/   # Rate limiting (Rust)
-├── litellm_rust/           # Python integration layer
-├── examples/               # Usage examples
-├── docs/                   # Detailed documentation
-└── tests/                  # Test suite
-```
-
-## Performance
+## Performance Benchmarks
 
 | Component | Baseline | Optimized | Use Case |
 |-----------|----------|-----------|----------|
@@ -109,49 +78,117 @@ litellm-rust/
 | Rate Limiting | 4-8x | **10-12x** | Request throttling, quota management |
 | Connection Pooling | 2-3x | **4-5x** | HTTP reuse, latency reduction |
 
-## Documentation
-
-- [API Reference](docs/api.md) - Complete API documentation
-- [Architecture Guide](docs/architecture.md) - Technical implementation details
-- [Feature Flags](docs/feature-flags.md) - Configuration and rollout strategies
-- [Performance Monitoring](docs/monitoring.md) - Metrics and optimization
-- [Contributing](docs/contributing.md) - Development guidelines
-
 ## Configuration
 
-Basic configuration via environment variables:
+Fast LiteLLM works out of the box with zero configuration. For advanced use cases, you can configure behavior via environment variables:
 
 ```bash
 # Disable specific features
-export LITELLM_RUST_RUST_ROUTING=false
+export FAST_LITELLM_RUST_ROUTING=false
 
-# Gradual rollout
-export LITELLM_RUST_BATCH_TOKEN_COUNTING=canary:10  # 10% traffic
+# Gradual rollout (10% of traffic)
+export FAST_LITELLM_BATCH_TOKEN_COUNTING=canary:10
 
-# Advanced configuration
-export LITELLM_RUST_FEATURE_CONFIG=/path/to/config.json
+# Custom configuration file
+export FAST_LITELLM_FEATURE_CONFIG=/path/to/config.json
 ```
 
-See [Configuration Guide](docs/configuration.md) for advanced options.
+See the [Configuration Guide](https://github.com/neul-labs/fast-litellm/blob/main/docs/configuration.md) for all options.
+
+## Requirements
+
+- Python 3.8 or higher
+- LiteLLM
+
+Rust is **not** required for installation - prebuilt wheels are available for all major platforms.
+
+## Development
+
+To contribute or build from source:
+
+**Prerequisites:**
+- Python 3.8+
+- Rust toolchain (1.70+)
+- [maturin](https://www.maturin.rs/) for building Python extensions
+
+**Setup:**
+
+```bash
+git clone https://github.com/neul-labs/fast-litellm.git
+cd fast-litellm
+
+# Install maturin
+pip install maturin
+
+# Build and install in development mode
+maturin develop
+
+# Run unit tests
+pip install pytest pytest-asyncio
+pytest tests/
+```
+
+### Integration Testing
+
+Fast LiteLLM includes comprehensive integration tests that run LiteLLM's test suite with acceleration enabled:
+
+```bash
+# Setup LiteLLM for testing
+./scripts/setup_litellm.sh
+
+# Run LiteLLM tests with acceleration
+./scripts/run_litellm_tests.sh
+
+# Compare performance (with vs without acceleration)
+./scripts/compare_performance.py
+```
+
+This ensures Fast LiteLLM doesn't break any LiteLLM functionality. See the [Testing Guide](https://github.com/neul-labs/fast-litellm/blob/main/docs/testing.md) for details.
+
+For more information, see our [Contributing Guide](https://github.com/neul-labs/fast-litellm/blob/main/docs/contributing.md).
+
+## Documentation
+
+- [API Reference](https://github.com/neul-labs/fast-litellm/blob/main/docs/api.md)
+- [Architecture Guide](https://github.com/neul-labs/fast-litellm/blob/main/docs/architecture.md)
+- [Feature Flags](https://github.com/neul-labs/fast-litellm/blob/main/docs/feature-flags.md)
+- [Performance Monitoring](https://github.com/neul-labs/fast-litellm/blob/main/docs/monitoring.md)
+
+## How It Works
+
+Fast LiteLLM uses PyO3 to create Python extensions from Rust code:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ LiteLLM Python Package                                      │
+├─────────────────────────────────────────────────────────────┤
+│ fast_litellm (Python Integration Layer)                    │
+│ ├── Enhanced Monkeypatching                                │
+│ ├── Feature Flags & Gradual Rollout                        │
+│ ├── Performance Monitoring                                 │
+│ └── Automatic Fallback                                     │
+├─────────────────────────────────────────────────────────────┤
+│ Rust Acceleration Components (PyO3)                        │
+│ ├── core               (Advanced Routing)                   │
+│ ├── tokens             (Token Counting)                    │
+│ ├── connection_pool    (Connection Management)             │
+│ └── rate_limiter       (Rate Limiting)                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+When you import `fast_litellm`, it automatically patches LiteLLM's performance-critical functions with Rust implementations while maintaining full compatibility with the Python API.
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](docs/contributing.md) for:
-
-- Development setup
-- Code style guidelines
-- Testing requirements
-- Pull request process
+We welcome contributions! Please see our [Contributing Guide](https://github.com/neul-labs/fast-litellm/blob/main/docs/contributing.md).
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Support
+## Links
 
-- [GitHub Issues](https://github.com/your-username/litellm-rust/issues) for bug reports and feature requests
-- [Discussions](https://github.com/your-username/litellm-rust/discussions) for questions and community support
-
----
-
-**Note**: This package provides acceleration for [LiteLLM](https://github.com/BerriAI/litellm). For LiteLLM documentation, visit the [official repository](https://github.com/BerriAI/litellm).
+- **GitHub**: https://github.com/neul-labs/fast-litellm
+- **PyPI**: https://pypi.org/project/fast-litellm/
+- **Issues**: https://github.com/neul-labs/fast-litellm/issues
+- **LiteLLM**: https://github.com/BerriAI/litellm

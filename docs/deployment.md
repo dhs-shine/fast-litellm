@@ -1,10 +1,10 @@
 # PyPI Deployment Guide
 
-This document outlines the PyPI packaging and deployment setup for litellm-rust.
+This document outlines the PyPI packaging and deployment setup for fast-litellm.
 
 ## 🚀 Package Overview
 
-The litellm-rust package is now ready for PyPI distribution with the following features:
+The fast-litellm package is now ready for PyPI distribution with the following features:
 
 - **Unified Rust Extension**: Single Python extension module built with maturin
 - **Professional Documentation**: Developer-focused README and organized docs/
@@ -15,8 +15,8 @@ The litellm-rust package is now ready for PyPI distribution with the following f
 ## 📦 Package Structure
 
 ```
-litellm-rust/
-├── litellm_rust/           # Python package
+fast-litellm/
+├── fast_litellm/           # Python package
 │   ├── __init__.py         # Main package with Rust imports
 │   ├── __init__.pyi        # Type stubs
 │   └── py.typed            # PEP 561 marker
@@ -47,8 +47,8 @@ requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
 [tool.maturin]
-python-source = "litellm_rust"
-module-name = "litellm_rust._rust"
+python-source = "fast_litellm"
+module-name = "fast_litellm._rust"
 features = ["pyo3/extension-module"]
 ```
 
@@ -139,7 +139,7 @@ dev = [
 
 2. **Test Installation**:
    ```bash
-   pip install --index-url https://test.pypi.org/simple/ litellm-rust
+   pip install --index-url https://test.pypi.org/simple/ fast-litellm
    ```
 
 ## 🔧 Development Setup
@@ -147,8 +147,8 @@ dev = [
 ### Quick Start
 ```bash
 # Clone repository
-git clone https://github.com/BerriAI/litellm-rust
-cd litellm-rust
+git clone https://github.com/neul-labs/fast-litellm
+cd fast-litellm
 
 # Run setup script
 ./scripts/setup_dev.sh
@@ -180,7 +180,7 @@ The package includes comprehensive testing:
 pytest tests/ -v
 
 # Run with coverage
-pytest tests/ --cov=litellm_rust --cov-report=html
+pytest tests/ --cov=fast_litellm --cov-report=html
 
 # Run only fast tests
 pytest tests/ -m "not slow"
@@ -193,32 +193,32 @@ pytest tests/test_basic.py::test_import_package
 
 ### Installation Test
 ```python
-import litellm_rust
+import fast_litellm
 
 # Check version
-print(f"Version: {litellm_rust.__version__}")
+print(f"Version: {fast_litellm.__version__}")
 
 # Check Rust acceleration
-print(f"Rust available: {litellm_rust.RUST_ACCELERATION_AVAILABLE}")
+print(f"Rust available: {fast_litellm.RUST_ACCELERATION_AVAILABLE}")
 
 # Basic functionality
-health = litellm_rust.health_check()
+health = fast_litellm.health_check()
 print(f"Health: {health}")
 ```
 
 ### Performance Verification
 ```python
-import litellm_rust
+import fast_litellm
 
 # Record performance
-litellm_rust.record_performance(
+fast_litellm.record_performance(
     component="test",
     operation="example",
     duration_ms=10.5
 )
 
 # Get statistics
-stats = litellm_rust.get_performance_stats()
+stats = fast_litellm.get_performance_stats()
 print(stats)
 ```
 
@@ -269,7 +269,7 @@ Before creating a release:
 
 ## 🎉 Success!
 
-The litellm-rust package is now fully configured for PyPI distribution with:
+The fast-litellm package is now fully configured for PyPI distribution with:
 
 ✅ Professional package structure
 ✅ Cross-platform Rust compilation
@@ -281,5 +281,5 @@ The litellm-rust package is now fully configured for PyPI distribution with:
 The package is ready for production deployment and can be installed via:
 
 ```bash
-pip install litellm-rust
+pip install fast-litellm
 ```

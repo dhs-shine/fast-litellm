@@ -16,7 +16,7 @@ def test_caching_behavior():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
         # Import Python tiktoken for comparison
         import tiktoken
@@ -31,7 +31,7 @@ def test_caching_behavior():
         print(f"Iterations: {iterations}")
         
         # Create token counters
-        rust_counter = litellm_token.SimpleTokenCounter(100)
+        rust_counter = _rust.SimpleTokenCounter(100)
         python_encoder = tiktoken.encoding_for_model(model)
         
         # Test 1: Cold cache performance (first run)
@@ -113,7 +113,7 @@ def test_single_call_overhead():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
         # Import Python tiktoken for comparison
         import tiktoken
@@ -123,7 +123,7 @@ def test_single_call_overhead():
         model = "gpt-3.5-turbo"
         
         # Create token counters
-        rust_counter = litellm_token.SimpleTokenCounter(100)
+        rust_counter = _rust.SimpleTokenCounter(100)
         python_encoder = tiktoken.encoding_for_model(model)
         
         # Time a single call

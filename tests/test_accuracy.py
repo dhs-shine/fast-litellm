@@ -15,13 +15,13 @@ def test_token_counting_accuracy():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         import tiktoken
         
         print("✓ Successfully imported both Rust and Python modules")
         
         # Create token counter
-        rust_counter = litellm_token.SimpleTokenCounter(100)
+        rust_counter = _rust.SimpleTokenCounter(100)
         print(f"✓ Created SimpleTokenCounter with cache size: {rust_counter.cache_size}")
         
         # Import Python tiktoken for comparison
@@ -89,12 +89,12 @@ def test_rate_limiting_functionality():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
-        print("✓ Successfully imported litellm_token")
+        print("✓ Successfully imported _rust")
         
         # Create rate limiter
-        rate_limiter = litellm_token.SimpleRateLimiter()
+        rate_limiter = _rust.SimpleRateLimiter()
         print("✓ Created SimpleRateLimiter")
         
         # Test rate limiting
@@ -123,7 +123,7 @@ def test_rate_limiting_functionality():
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_token: {e}")
+        print(f"✗ Failed to import _rust: {e}")
         return False
     except Exception as e:
         print(f"✗ Error during rate limiting test: {e}")

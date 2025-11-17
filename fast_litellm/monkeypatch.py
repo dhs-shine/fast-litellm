@@ -119,73 +119,73 @@ def apply_acceleration(rust_extensions_module) -> bool:
     
     # Get the Rust extension modules
     try:
-        litellm_core = rust_extensions_module.litellm_core
-        litellm_token = rust_extensions_module.litellm_token
-        litellm_connection_pool = rust_extensions_module.litellm_connection_pool
-        litellm_rate_limiter = rust_extensions_module.litellm_rate_limiter
+        fast_litellm = rust_extensions_module.fast_litellm
+        _rust = rust_extensions_module._rust
+        _rust = rust_extensions_module._rust
+        _rust = rust_extensions_module._rust
     except AttributeError as e:
         logger.error(f"Could not access Rust extensions: {e}")
         return False
     
     # Patch main Router class - replace with our AdvancedRouter
     # Note: This requires API compatibility verification
-    if hasattr(litellm_core, "AdvancedRouter"):
+    if hasattr(fast_litellm, "AdvancedRouter"):
         total_patches += 1
-        if _patch_class("litellm.router", "Router", litellm_core.AdvancedRouter):
+        if _patch_class("litellm.router", "Router", fast_litellm.AdvancedRouter):
             success_count += 1
     
     # Patch Deployment class in types.router
-    if hasattr(litellm_core, "Deployment"):
+    if hasattr(fast_litellm, "Deployment"):
         total_patches += 1
-        if _patch_class("litellm.types.router", "Deployment", litellm_core.Deployment):
+        if _patch_class("litellm.types.router", "Deployment", fast_litellm.Deployment):
             success_count += 1
     
     # Patch RoutingStrategy enum
-    if hasattr(litellm_core, "RoutingStrategy"):
+    if hasattr(fast_litellm, "RoutingStrategy"):
         total_patches += 1
-        if _patch_class("litellm.types.router", "RoutingStrategy", litellm_core.RoutingStrategy):
+        if _patch_class("litellm.types.router", "RoutingStrategy", fast_litellm.RoutingStrategy):
             success_count += 1
     
     # Provide new utility classes (these don't exist in original LiteLLM)
-    if hasattr(litellm_token, "SimpleTokenCounter"):
+    if hasattr(_rust, "SimpleTokenCounter"):
         total_patches += 1
-        if _patch_class("litellm", "SimpleTokenCounter", litellm_token.SimpleTokenCounter):
+        if _patch_class("litellm", "SimpleTokenCounter", _rust.SimpleTokenCounter):
             success_count += 1
     
-    if hasattr(litellm_rate_limiter, "SimpleRateLimiter"):
+    if hasattr(_rust, "SimpleRateLimiter"):
         total_patches += 1
-        if _patch_class("litellm", "SimpleRateLimiter", litellm_rate_limiter.SimpleRateLimiter):
+        if _patch_class("litellm", "SimpleRateLimiter", _rust.SimpleRateLimiter):
             success_count += 1
     
-    if hasattr(litellm_connection_pool, "SimpleConnectionPool"):
+    if hasattr(_rust, "SimpleConnectionPool"):
         total_patches += 1
-        if _patch_class("litellm", "SimpleConnectionPool", litellm_connection_pool.SimpleConnectionPool):
+        if _patch_class("litellm", "SimpleConnectionPool", _rust.SimpleConnectionPool):
             success_count += 1
     
     # Patch health check functions
-    if hasattr(litellm_core, "health_check"):
+    if hasattr(fast_litellm, "health_check"):
         total_patches += 1
-        if _patch_function("litellm", "health_check", litellm_core.health_check):
+        if _patch_function("litellm", "health_check", fast_litellm.health_check):
             success_count += 1
     
-    if hasattr(litellm_core, "advanced_router_health_check"):
+    if hasattr(fast_litellm, "advanced_router_health_check"):
         total_patches += 1
-        if _patch_function("litellm.router", "advanced_router_health_check", litellm_core.advanced_router_health_check):
+        if _patch_function("litellm.router", "advanced_router_health_check", fast_litellm.advanced_router_health_check):
             success_count += 1
     
-    if hasattr(litellm_token, "token_health_check"):
+    if hasattr(_rust, "token_health_check"):
         total_patches += 1
-        if _patch_function("litellm", "token_health_check", litellm_token.token_health_check):
+        if _patch_function("litellm", "token_health_check", _rust.token_health_check):
             success_count += 1
     
-    if hasattr(litellm_connection_pool, "connection_pool_health_check"):
+    if hasattr(_rust, "connection_pool_health_check"):
         total_patches += 1
-        if _patch_function("litellm", "connection_pool_health_check", litellm_connection_pool.connection_pool_health_check):
+        if _patch_function("litellm", "connection_pool_health_check", _rust.connection_pool_health_check):
             success_count += 1
     
-    if hasattr(litellm_rate_limiter, "rate_limit_health_check"):
+    if hasattr(_rust, "rate_limit_health_check"):
         total_patches += 1
-        if _patch_function("litellm", "rate_limit_health_check", litellm_rate_limiter.rate_limit_health_check):
+        if _patch_function("litellm", "rate_limit_health_check", _rust.rate_limit_health_check):
             success_count += 1
     
     logger.info(f"Applied {success_count}/{total_patches} Rust acceleration patches successfully.")

@@ -1,6 +1,6 @@
 # Configuration Guide
 
-Complete configuration reference for LiteLLM Rust acceleration.
+Complete configuration reference for Fast LiteLLM acceleration.
 
 ## Environment Variables
 
@@ -8,14 +8,14 @@ Complete configuration reference for LiteLLM Rust acceleration.
 
 | Variable | Type | Default | Description |
 |----------|------|---------|-------------|
-| `LITELLM_RUST_DISABLE_ALL` | boolean | `false` | Disable all Rust acceleration |
-| `LITELLM_RUST_FEATURE_CONFIG` | path | - | Path to JSON configuration file |
-| `LITELLM_RUST_ALERT_FILE` | path | - | Path to alert log file |
+| `FAST_LITELLM_DISABLE_ALL` | boolean | `false` | Disable all Rust acceleration |
+| `FAST_LITELLM_FEATURE_CONFIG` | path | - | Path to JSON configuration file |
+| `FAST_LITELLM_ALERT_FILE` | path | - | Path to alert log file |
 | `RUST_LOG` | string | - | Rust logging level (debug, info, warn, error) |
 
 ### Feature-Specific Controls
 
-Format: `LITELLM_RUST_{FEATURE_NAME}={value}`
+Format: `FAST_LITELLM_{FEATURE_NAME}={value}`
 
 **Values**:
 - `true` / `enabled`: Enable feature (100% traffic)
@@ -26,15 +26,15 @@ Format: `LITELLM_RUST_{FEATURE_NAME}={value}`
 **Available Features**:
 ```bash
 # Core features
-export LITELLM_RUST_RUST_ROUTING=true
-export LITELLM_RUST_RUST_TOKEN_COUNTING=true
-export LITELLM_RUST_RUST_RATE_LIMITING=rollout:75
-export LITELLM_RUST_RUST_CONNECTION_POOLING=rollout:50
+export FAST_LITELLM_RUST_ROUTING=true
+export FAST_LITELLM_RUST_TOKEN_COUNTING=true
+export FAST_LITELLM_RUST_RATE_LIMITING=rollout:75
+export FAST_LITELLM_RUST_CONNECTION_POOLING=rollout:50
 
 # Advanced features
-export LITELLM_RUST_BATCH_TOKEN_COUNTING=canary:10
-export LITELLM_RUST_ASYNC_ROUTING=canary:5
-export LITELLM_RUST_PERFORMANCE_MONITORING=true
+export FAST_LITELLM_BATCH_TOKEN_COUNTING=canary:10
+export FAST_LITELLM_ASYNC_ROUTING=canary:5
+export FAST_LITELLM_PERFORMANCE_MONITORING=true
 ```
 
 ## JSON Configuration
@@ -88,10 +88,10 @@ export LITELLM_RUST_PERFORMANCE_MONITORING=true
 
 ```bash
 # Cache size for model encodings
-export LITELLM_RUST_TOKEN_CACHE_SIZE=100
+export FAST_LITELLM_TOKEN_CACHE_SIZE=100
 
 # Enable batch processing
-export LITELLM_RUST_BATCH_TOKEN_COUNTING=canary:15
+export FAST_LITELLM_BATCH_TOKEN_COUNTING=canary:15
 ```
 
 ```json
@@ -115,10 +115,10 @@ export LITELLM_RUST_BATCH_TOKEN_COUNTING=canary:15
 
 ```bash
 # Routing strategy
-export LITELLM_RUST_ROUTING_STRATEGY=least_busy
+export FAST_LITELLM_ROUTING_STRATEGY=least_busy
 
 # Async routing
-export LITELLM_RUST_ASYNC_ROUTING=shadow:5
+export FAST_LITELLM_ASYNC_ROUTING=shadow:5
 ```
 
 ```json
@@ -142,7 +142,7 @@ export LITELLM_RUST_ASYNC_ROUTING=shadow:5
 
 ```bash
 # Rate limiting configuration
-export LITELLM_RUST_RUST_RATE_LIMITING=rollout:75
+export FAST_LITELLM_RUST_RATE_LIMITING=rollout:75
 ```
 
 ```json
@@ -162,7 +162,7 @@ export LITELLM_RUST_RUST_RATE_LIMITING=rollout:75
 
 ```bash
 # Connection pooling
-export LITELLM_RUST_RUST_CONNECTION_POOLING=rollout:50
+export FAST_LITELLM_RUST_CONNECTION_POOLING=rollout:50
 ```
 
 ```json
@@ -184,11 +184,11 @@ export LITELLM_RUST_RUST_CONNECTION_POOLING=rollout:50
 
 ```bash
 # Enable performance monitoring
-export LITELLM_RUST_PERFORMANCE_MONITORING=true
+export FAST_LITELLM_PERFORMANCE_MONITORING=true
 
 # Alert configuration
-export LITELLM_RUST_ALERT_FILE=/var/log/litellm_alerts.log
-export LITELLM_RUST_METRICS_RETENTION_HOURS=48
+export FAST_LITELLM_ALERT_FILE=/var/log/litellm_alerts.log
+export FAST_LITELLM_METRICS_RETENTION_HOURS=48
 ```
 
 ```json
@@ -236,11 +236,11 @@ Default alert thresholds can be customized:
 
 ```bash
 # Enable all features for development
-export LITELLM_RUST_RUST_ROUTING=true
-export LITELLM_RUST_RUST_TOKEN_COUNTING=true
-export LITELLM_RUST_BATCH_TOKEN_COUNTING=true
-export LITELLM_RUST_ASYNC_ROUTING=true
-export LITELLM_RUST_PERFORMANCE_MONITORING=true
+export FAST_LITELLM_RUST_ROUTING=true
+export FAST_LITELLM_RUST_TOKEN_COUNTING=true
+export FAST_LITELLM_BATCH_TOKEN_COUNTING=true
+export FAST_LITELLM_ASYNC_ROUTING=true
+export FAST_LITELLM_PERFORMANCE_MONITORING=true
 export RUST_LOG=debug
 ```
 
@@ -322,7 +322,7 @@ export RUST_LOG=debug
     "enable_automatic_degradation": true,
     "enable_performance_alerts": true,
     "metrics_retention_hours": 72,
-    "alert_file": "/var/log/litellm_rust_alerts.log"
+    "alert_file": "/var/log/fast_litellm_alerts.log"
   }
 }
 ```
@@ -332,7 +332,7 @@ export RUST_LOG=debug
 ### Programmatic Validation
 
 ```python
-import litellm_rust
+import fast_litellm
 import json
 
 # Load and validate configuration
@@ -370,18 +370,18 @@ validate_config('/path/to/config.json')
 # Test configuration changes
 def test_config_change(new_config):
     # Save current state
-    original_status = litellm_rust.get_feature_status()
+    original_status = fast_litellm.get_feature_status()
 
     try:
         # Apply new configuration
-        os.environ['LITELLM_RUST_FEATURE_CONFIG'] = new_config
+        os.environ['FAST_LITELLM_FEATURE_CONFIG'] = new_config
 
         # Reload configuration (restart required in practice)
         # Test functionality
-        assert litellm_rust.is_enabled('rust_routing')
+        assert fast_litellm.is_enabled('rust_routing')
 
         # Check metrics
-        stats = litellm_rust.get_performance_stats()
+        stats = fast_litellm.get_performance_stats()
         assert len(stats) > 0
 
         print("Configuration test passed")

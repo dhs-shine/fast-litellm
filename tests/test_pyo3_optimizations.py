@@ -16,16 +16,16 @@ def test_pyo3_optimizations():
     
     try:
         # Import the Rust module
-        import litellm_core
+        import fast_litellm
         
-        print("✓ Successfully imported litellm_core")
+        print("✓ Successfully imported fast_litellm")
         
         # Test health check
-        health = litellm_core.health_check()
+        health = fast_litellm.health_check()
         print(f"✓ Health check returned: {health}")
         
         # Test core components
-        core = litellm_core.LiteLLMCore()
+        core = fast_litellm.LiteLLMCore()
         print(f"✓ Created LiteLLMCore instance")
         print(f"✓ Core available: {core.is_available()}")
         
@@ -46,7 +46,7 @@ def test_pyo3_optimizations():
         }
         
         # Create deployment with direct Python objects
-        deployment = litellm_core.Deployment(
+        deployment = fast_litellm.Deployment(
             "test-model",
             litellm_params,
             model_info
@@ -110,7 +110,7 @@ def test_pyo3_optimizations():
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_core: {e}")
+        print(f"✗ Failed to import fast_litellm: {e}")
         return False
     except Exception as e:
         print(f"✗ Error testing PyO3 optimizations: {e}")

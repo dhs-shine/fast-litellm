@@ -14,21 +14,21 @@ def test_rust_core():
     """Test the Rust core components."""
     try:
         # Try to import the Rust module
-        import litellm_core
+        import fast_litellm
         
-        print("✓ Successfully imported litellm_core")
+        print("✓ Successfully imported fast_litellm")
         
         # Test health check
-        health = litellm_core.health_check()
+        health = fast_litellm.health_check()
         print(f"✓ Health check returned: {health}")
         
         # Test LiteLLMCore creation
-        core = litellm_core.LiteLLMCore()
+        core = fast_litellm.LiteLLMCore()
         print(f"✓ Created LiteLLMCore instance")
         print(f"✓ Core available: {core.is_available()}")
         
         # Test Deployment creation
-        deployment = litellm_core.Deployment(
+        deployment = fast_litellm.Deployment(
             "test-model",
             '{"provider": "openai"}',
             '{"description": "Test model"}'
@@ -58,7 +58,7 @@ def test_rust_core():
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_core: {e}")
+        print(f"✗ Failed to import fast_litellm: {e}")
         print("This is expected if the module isn't properly installed or in the Python path")
         return False
     except Exception as e:

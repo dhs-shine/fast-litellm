@@ -87,12 +87,12 @@ def profile_rust_implementation():
     
     try:
         # Import the Rust module
-        import litellm_core
+        import fast_litellm
         
-        print("✓ Successfully imported litellm_core")
+        print("✓ Successfully imported fast_litellm")
         
         # Create router and deployment
-        from litellm_core import RoutingStrategy, RouterConfig, AdvancedRouter, Deployment
+        from fast_litellm import RoutingStrategy, RouterConfig, AdvancedRouter, Deployment
         
         # Create router config
         config = RouterConfig(
@@ -153,7 +153,7 @@ def profile_rust_implementation():
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_core: {e}")
+        print(f"✗ Failed to import fast_litellm: {e}")
         return False
     except Exception as e:
         print(f"✗ Error profiling Rust implementation: {e}")
@@ -167,16 +167,16 @@ def analyze_bridge_overhead():
     
     try:
         # Import the Rust module
-        import litellm_core
+        import fast_litellm
         
-        print("✓ Successfully imported litellm_core")
+        print("✓ Successfully imported fast_litellm")
         
         # Create a simple function to measure bridge overhead
         def measure_bridge_overhead():
             # Measure the cost of just calling a simple Rust function
             start_time = time.time()
             for i in range(100000):
-                result = litellm_core.health_check()
+                result = fast_litellm.health_check()
             bridge_time = time.time() - start_time
             
             print(f"✓ Bridge overhead for 100,000 health_check calls: {bridge_time:.4f}s")
@@ -205,7 +205,7 @@ def analyze_bridge_overhead():
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_core: {e}")
+        print(f"✗ Failed to import fast_litellm: {e}")
         return False
     except Exception as e:
         print(f"✗ Error analyzing bridge overhead: {e}")

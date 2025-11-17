@@ -16,10 +16,10 @@ def test_token_counting():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
         # Create token counter
-        counter = litellm_token.SimpleTokenCounter(100)
+        counter = _rust.SimpleTokenCounter(100)
         print(f"✓ Created SimpleTokenCounter")
         
         # Test basic token counting
@@ -57,10 +57,10 @@ def test_rate_limiting():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
         # Create rate limiter
-        limiter = litellm_token.SimpleRateLimiter()
+        limiter = _rust.SimpleRateLimiter()
         print(f"✓ Created SimpleRateLimiter")
         
         # Test rate limit check
@@ -94,14 +94,14 @@ def test_connection_pooling():
     
     try:
         # Import the Rust module
-        import litellm_connection_pool
+        import _rust
         
         # Test health check
-        health = litellm_connection_pool.connection_pool_health_check()
+        health = _rust.connection_pool_health_check()
         print(f"✓ Connection pool health check: {health}")
         
         # Create connection pool
-        pool = litellm_connection_pool.SimpleConnectionPool(10)
+        pool = _rust.SimpleConnectionPool(10)
         print(f"✓ Created SimpleConnectionPool with max connections: {pool.max_connections_per_provider}")
         
         # Test getting a connection
@@ -136,7 +136,7 @@ def test_performance_comparison():
     
     try:
         # Import the Rust modules
-        import litellm_token
+        import _rust
         import tiktoken
         
         # Test parameters
@@ -149,7 +149,7 @@ def test_performance_comparison():
         print(f"Iterations: {iterations}")
         
         # Rust token counting
-        rust_counter = litellm_token.SimpleTokenCounter(100)
+        rust_counter = _rust.SimpleTokenCounter(100)
         
         start_time = time.time()
         for i in range(iterations):
@@ -187,12 +187,12 @@ def test_integration_scenarios():
     
     try:
         # Import all Rust modules
-        import litellm_token
-        import litellm_connection_pool
+        import _rust
+        import _rust
         
         # Scenario 1: Token counting for multiple models
         print("\n--- Scenario 1: Multi-model Token Counting ---")
-        counter = litellm_token.SimpleTokenCounter(100)
+        counter = _rust.SimpleTokenCounter(100)
         
         test_models = ["gpt-3.5-turbo", "gpt-4", "claude-3-haiku"]
         test_text = "This is a test message for comparing different models."
@@ -203,7 +203,7 @@ def test_integration_scenarios():
         
         # Scenario 2: Rate limiting with multiple users
         print("\n--- Scenario 2: Multi-user Rate Limiting ---")
-        limiter = litellm_token.SimpleRateLimiter()
+        limiter = _rust.SimpleRateLimiter()
         
         users = ["user1", "user2", "user3"]
         for user in users:
@@ -214,7 +214,7 @@ def test_integration_scenarios():
         
         # Scenario 3: Connection management for multiple providers
         print("\n--- Scenario 3: Multi-provider Connections ---")
-        pool = litellm_connection_pool.SimpleConnectionPool(5)
+        pool = _rust.SimpleConnectionPool(5)
         
         providers = ["openai", "anthropic", "cohere"]
         for provider in providers:
@@ -228,9 +228,9 @@ def test_integration_scenarios():
         
         # Scenario 4: Combined operations
         print("\n--- Scenario 4: Combined Operations ---")
-        combined_counter = litellm_token.SimpleTokenCounter(50)
-        combined_limiter = litellm_token.SimpleRateLimiter()
-        combined_pool = litellm_connection_pool.SimpleConnectionPool(3)
+        combined_counter = _rust.SimpleTokenCounter(50)
+        combined_limiter = _rust.SimpleRateLimiter()
+        combined_pool = _rust.SimpleConnectionPool(3)
         
         # Process a batch of requests
         batch_texts = [

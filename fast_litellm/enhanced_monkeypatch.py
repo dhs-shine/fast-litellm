@@ -251,42 +251,42 @@ def enhanced_apply_acceleration(rust_extensions_module) -> bool:
 
     # Get the Rust extension modules
     try:
-        litellm_core = rust_extensions_module.litellm_core
-        litellm_token = rust_extensions_module.litellm_token
-        litellm_connection_pool = rust_extensions_module.litellm_connection_pool
-        litellm_rate_limiter = rust_extensions_module.litellm_rate_limiter
+        fast_litellm = rust_extensions_module.fast_litellm
+        _rust = rust_extensions_module._rust
+        _rust = rust_extensions_module._rust
+        _rust = rust_extensions_module._rust
     except AttributeError as e:
         logger.error(f"Could not access Rust extensions: {e}")
         return False
 
     # Patch routing components with feature flag
-    if hasattr(litellm_core, "AdvancedRouter"):
+    if hasattr(fast_litellm, "AdvancedRouter"):
         total_patches += 1
-        if enhanced_patch_class("litellm.router", "Router", litellm_core.AdvancedRouter, "rust_routing"):
+        if enhanced_patch_class("litellm.router", "Router", fast_litellm.AdvancedRouter, "rust_routing"):
             success_count += 1
 
     # Patch token counting with feature flag
-    if hasattr(litellm_token, "SimpleTokenCounter"):
+    if hasattr(_rust, "SimpleTokenCounter"):
         total_patches += 1
         # Patch the token counting function in the utils module
-        if enhanced_patch_function("litellm.utils", "token_counter", litellm_token.SimpleTokenCounter, "rust_token_counting"):
+        if enhanced_patch_function("litellm.utils", "token_counter", _rust.SimpleTokenCounter, "rust_token_counting"):
             success_count += 1
 
     # Patch rate limiting
-    if hasattr(litellm_rate_limiter, "SimpleRateLimiter"):
+    if hasattr(_rust, "SimpleRateLimiter"):
         total_patches += 1
-        if enhanced_patch_class("litellm", "SimpleRateLimiter", litellm_rate_limiter.SimpleRateLimiter, "rust_rate_limiting"):
+        if enhanced_patch_class("litellm", "SimpleRateLimiter", _rust.SimpleRateLimiter, "rust_rate_limiting"):
             success_count += 1
 
     # Patch connection pooling
-    if hasattr(litellm_connection_pool, "SimpleConnectionPool"):
+    if hasattr(_rust, "SimpleConnectionPool"):
         total_patches += 1
-        if enhanced_patch_class("litellm", "SimpleConnectionPool", litellm_connection_pool.SimpleConnectionPool, "rust_connection_pooling"):
+        if enhanced_patch_class("litellm", "SimpleConnectionPool", _rust.SimpleConnectionPool, "rust_connection_pooling"):
             success_count += 1
 
     # Add new batch processing function if available
-    if hasattr(litellm_token, "SimpleTokenCounter"):
-        counter = litellm_token.SimpleTokenCounter(100)
+    if hasattr(_rust, "SimpleTokenCounter"):
+        counter = _rust.SimpleTokenCounter(100)
         if hasattr(counter, "count_tokens_batch"):
             total_patches += 1
             if enhanced_patch_function("litellm.utils", "count_tokens_batch", counter.count_tokens_batch, "batch_token_counting"):

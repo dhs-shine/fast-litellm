@@ -98,8 +98,8 @@ jobs:
 
       - name: Test installation from Test PyPI
         run: |
-          pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ litellm-rust
-          python -c "import litellm_rust; print('✅ Package installed successfully')"
+          pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ fast-litellm
+          python -c "import fast_litellm; print('✅ Package installed successfully')"
 
   release:
     name: Release to PyPI
@@ -152,6 +152,6 @@ jobs:
 
       - name: Notification
         run: |
-          echo "🎉 Successfully released litellm-rust v${{ steps.extract_version.outputs.VERSION }} to PyPI!"
-          echo "📦 Package: https://pypi.org/project/litellm-rust/"
+          echo "🎉 Successfully released fast-litellm v${{ steps.extract_version.outputs.VERSION }} to PyPI!"
+          echo "📦 Package: https://pypi.org/project/fast-litellm/"
           echo "🏷️ Release: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.extract_version.outputs.VERSION }}"

@@ -17,7 +17,7 @@ def test_actual_performance_benefits():
     
     try:
         # Import both implementations
-        import litellm_core
+        import fast_litellm
         import tiktoken
         
         print("✓ Successfully imported both Rust and Python modules")
@@ -51,7 +51,7 @@ def test_actual_performance_benefits():
         print(f"  Avg: {python_avg*1000:.4f}ms per text")
         
         # Test Rust token counting performance
-        rust_token_counter = litellm_core.SimpleTokenCounter(100)
+        rust_token_counter = fast_litellm.SimpleTokenCounter(100)
         
         print("Testing Rust token counting performance...")
         start_time = time.time()

@@ -15,7 +15,7 @@ import time
 import random
 from typing import List
 
-import litellm_rust
+import fast_litellm
 
 
 def demonstrate_feature_flags():
@@ -23,7 +23,7 @@ def demonstrate_feature_flags():
     print("=== Feature Flag Management ===")
 
     # Check current feature status
-    status = litellm_rust.get_feature_status()
+    status = fast_litellm.get_feature_status()
     print(f"Total features: {status['global_status']['total_features']}")
     print(f"Enabled features: {status['global_status']['enabled_features']}")
 
@@ -32,9 +32,9 @@ def demonstrate_feature_flags():
         print(f"  {feature_name}: {feature_data['state']} ({feature_data['rollout_percentage']}%)")
 
     # Test feature flag checking
-    print(f"\nRust routing enabled: {litellm_rust.is_enabled('rust_routing')}")
-    print(f"Batch token counting enabled: {litellm_rust.is_enabled('batch_token_counting')}")
-    print(f"Async routing enabled: {litellm_rust.is_enabled('async_routing')}")
+    print(f"\nRust routing enabled: {fast_litellm.is_enabled('rust_routing')}")
+    print(f"Batch token counting enabled: {fast_litellm.is_enabled('batch_token_counting')}")
+    print(f"Async routing enabled: {fast_litellm.is_enabled('async_routing')}")
 
 
 def demonstrate_performance_monitoring():
@@ -58,7 +58,7 @@ def demonstrate_performance_monitoring():
 
         success = random.random() < success_rate
 
-        litellm_rust.record_performance(
+        fast_litellm.record_performance(
             component=component,
             operation=operation,
             duration_ms=duration,
@@ -68,7 +68,7 @@ def demonstrate_performance_monitoring():
         )
 
     # Get performance statistics
-    all_stats = litellm_rust.get_performance_stats()
+    all_stats = fast_litellm.get_performance_stats()
 
     for component, stats in all_stats.items():
         print(f"\n{component}:")
@@ -79,7 +79,7 @@ def demonstrate_performance_monitoring():
 
     # Compare implementations
     if 'rust_routing' in all_stats and 'python_routing' in all_stats:
-        comparison = litellm_rust.compare_implementations('rust_routing', 'python_routing')
+        comparison = fast_litellm.compare_implementations('rust_routing', 'python_routing')
         if 'speed_improvement' in comparison:
             print(f"\nPerformance Comparison:")
             print(f"  Speed improvement: {comparison['speed_improvement']['avg_latency']:.2f}x")
@@ -90,13 +90,13 @@ def demonstrate_batch_processing():
     """Demonstrate batch processing capabilities."""
     print("\n=== Batch Processing ===")
 
-    if not litellm_rust.RUST_ACCELERATION_AVAILABLE:
+    if not fast_litellm.RUST_ACCELERATION_AVAILABLE:
         print("Rust acceleration not available, skipping batch processing demo")
         return
 
     try:
-        from litellm_rust.rust_extensions import litellm_token
-        counter = litellm_token.SimpleTokenCounter(100)
+        from fast_litellm.rust_extensions import _rust
+        counter = _rust.SimpleTokenCounter(100)
 
         # Test single vs batch processing
         texts = [
@@ -140,7 +140,7 @@ def demonstrate_gradual_rollout():
 
     enabled_count = 0
     for request_id in requests:
-        if litellm_rust.is_enabled('rust_connection_pooling', request_id):
+        if fast_litellm.is_enabled('rust_connection_pooling', request_id):
             enabled_count += 1
 
     print(f"Connection pooling enabled for {enabled_count}/100 requests ({enabled_count}%)")
@@ -148,7 +148,7 @@ def demonstrate_gradual_rollout():
     # Test canary rollout
     canary_enabled = 0
     for request_id in requests:
-        if litellm_rust.is_enabled('batch_token_counting', request_id):
+        if fast_litellm.is_enabled('batch_token_counting', request_id):
             canary_enabled += 1
 
     print(f"Batch token counting (canary) enabled for {canary_enabled}/100 requests ({canary_enabled}%)")
@@ -158,7 +158,7 @@ def demonstrate_recommendations():
     """Demonstrate optimization recommendations."""
     print("\n=== Optimization Recommendations ===")
 
-    recommendations = litellm_rust.get_recommendations()
+    recommendations = fast_litellm.get_recommendations()
 
     if recommendations:
         for rec in recommendations:
@@ -177,11 +177,11 @@ def demonstrate_export_capabilities():
     print("\n=== Data Export ===")
 
     # Export performance data as JSON
-    json_data = litellm_rust.export_performance_data(format="json")
+    json_data = fast_litellm.export_performance_data(format="json")
     print(f"JSON export size: {len(json_data)} characters")
 
     # Export as CSV
-    csv_data = litellm_rust.export_performance_data(format="csv")
+    csv_data = fast_litellm.export_performance_data(format="csv")
     print(f"CSV export size: {len(csv_data)} characters")
 
     # Show sample of JSON data
@@ -201,7 +201,7 @@ def demonstrate_patch_status():
     print("\n=== Patch Status ===")
 
     try:
-        status = litellm_rust.get_patch_status()
+        status = fast_litellm.get_patch_status()
 
         print(f"Total patches applied: {status['total_patches']}")
 
@@ -226,7 +226,7 @@ async def demonstrate_async_features():
 
         # Record performance for async operation
         duration = random.uniform(5, 25)
-        litellm_rust.record_performance(
+        fast_litellm.record_performance(
             component="async_rust_routing",
             operation="async_route",
             duration_ms=duration,
@@ -243,7 +243,7 @@ async def demonstrate_async_features():
     print(f"Completed {len(results)} async operations")
 
     # Check async component stats
-    async_stats = litellm_rust.get_performance_stats("async_rust_routing")
+    async_stats = fast_litellm.get_performance_stats("async_rust_routing")
     if async_stats:
         print(f"Async routing average latency: {async_stats['avg_duration_ms']:.2f}ms")
 
@@ -254,7 +254,7 @@ def main():
     print("=" * 50)
 
     # Check if Rust acceleration is available
-    if not litellm_rust.RUST_ACCELERATION_AVAILABLE:
+    if not fast_litellm.RUST_ACCELERATION_AVAILABLE:
         print("WARNING: Rust acceleration is not available!")
         print("This demo will show limited functionality.")
 

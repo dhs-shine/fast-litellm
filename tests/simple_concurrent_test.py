@@ -107,8 +107,8 @@ def simple_concurrent_benchmark():
     print("\n--- Rust Implementation (True Parallelism) ---")
     
     try:
-        import litellm_core
-        from litellm_core import RoutingStrategy, RouterConfig, AdvancedRouter, Deployment
+        import fast_litellm
+        from fast_litellm import RoutingStrategy, RouterConfig, AdvancedRouter, Deployment
         
         # Create router config
         config = RouterConfig(
@@ -275,7 +275,7 @@ def simple_concurrent_benchmark():
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_core: {e}")
+        print(f"✗ Failed to import fast_litellm: {e}")
         print("This is expected if the module isn't properly built or in the Python path")
         return False
     except Exception as e:

@@ -15,16 +15,16 @@ def test_full_implementation():
     
     try:
         # Import all Rust modules
-        import litellm_core
-        import litellm_token
-        import litellm_connection_pool
+        import fast_litellm
+        import _rust
+        import _rust
         
         print("✓ Successfully imported all Rust modules")
         
         # Test health checks
-        core_health = litellm_core.health_check()
-        token_health = litellm_token.token_health_check()
-        pool_health = litellm_connection_pool.connection_pool_health_check()
+        core_health = fast_litellm.health_check()
+        token_health = _rust.token_health_check()
+        pool_health = _rust.connection_pool_health_check()
         
         print(f"✓ Core health check: {core_health}")
         print(f"✓ Token health check: {token_health}")
@@ -35,12 +35,12 @@ def test_full_implementation():
             return False
         
         # Test core functionality
-        core = litellm_core.LiteLLMCore()
+        core = fast_litellm.LiteLLMCore()
         print(f"✓ Created LiteLLMCore instance")
         print(f"✓ Core available: {core.is_available()}")
         
         # Test token counting
-        token_counter = litellm_token.SimpleTokenCounter(100)
+        token_counter = _rust.SimpleTokenCounter(100)
         print(f"✓ Created SimpleTokenCounter with cache size: {token_counter.cache_size}")
         
         text = "Hello, world! This is a test message."
@@ -58,7 +58,7 @@ def test_full_implementation():
         print(f"✓ Token cache statistics: {cache_stats}")
         
         # Test rate limiting
-        rate_limiter = litellm_token.SimpleRateLimiter()
+        rate_limiter = _rust.SimpleRateLimiter()
         print(f"✓ Created SimpleRateLimiter")
         
         key = "test-user"
@@ -72,7 +72,7 @@ def test_full_implementation():
         print(f"✓ Rate limit statistics: {rate_stats}")
         
         # Test connection pooling
-        connection_pool = litellm_connection_pool.SimpleConnectionPool(10)
+        connection_pool = _rust.SimpleConnectionPool(10)
         print(f"✓ Created SimpleConnectionPool with max connections: {connection_pool.max_connections_per_provider}")
         
         provider = "openai"
@@ -98,7 +98,7 @@ def test_full_implementation():
             "output_cost_per_token": 0.000002
         }
         
-        deployment = litellm_core.Deployment(
+        deployment = fast_litellm.Deployment(
             "test-model",
             litellm_params,
             model_info

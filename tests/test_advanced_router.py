@@ -16,20 +16,20 @@ def test_advanced_router():
     
     try:
         # Import the Rust module
-        import litellm_core
+        import fast_litellm
         
-        print("✓ Successfully imported litellm_core")
+        print("✓ Successfully imported fast_litellm")
         
         # Test health check
-        health = litellm_core.health_check()
+        health = fast_litellm.health_check()
         print(f"✓ Core health check returned: {health}")
         
         # Test advanced router health check
-        router_health = litellm_core.advanced_router_health_check()
+        router_health = fast_litellm.advanced_router_health_check()
         print(f"✓ Advanced router health check returned: {router_health}")
         
         # Test routing strategy creation
-        from litellm_core import RoutingStrategy
+        from fast_litellm import RoutingStrategy
         strategies = [
             ("SimpleShuffle", 0),
             ("LeastBusy", 1),
@@ -45,7 +45,7 @@ def test_advanced_router():
             print(f"✓ Created {strategy_name} routing strategy with ID: {strategy.strategy_id}")
         
         # Test router config creation
-        from litellm_core import RouterConfig
+        from fast_litellm import RouterConfig
         config = RouterConfig(
             routing_strategy=RoutingStrategy.LeastBusy,
             cooldown_time_seconds=60,
@@ -59,7 +59,7 @@ def test_advanced_router():
         print(f"  Timeout: {config.timeout_seconds}")
         
         # Test advanced router creation
-        from litellm_core import AdvancedRouter
+        from fast_litellm import AdvancedRouter
         router = AdvancedRouter(config)
         print(f"✓ Created AdvancedRouter")
         
@@ -76,7 +76,7 @@ def test_advanced_router():
             "output_cost_per_token": 0.000002
         }
         
-        deployment = litellm_core.Deployment(
+        deployment = fast_litellm.Deployment(
             "test-model",
             litellm_params,
             model_info
@@ -125,7 +125,7 @@ def test_advanced_router():
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_core: {e}")
+        print(f"✗ Failed to import fast_litellm: {e}")
         return False
     except Exception as e:
         print(f"✗ Error testing advanced router: {e}")

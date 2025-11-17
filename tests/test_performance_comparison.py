@@ -16,7 +16,7 @@ def test_token_counting_performance():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
         # Import Python tiktoken for comparison
         import tiktoken
@@ -31,7 +31,7 @@ def test_token_counting_performance():
         print(f"Iterations: {iterations}")
         
         # Create token counters
-        rust_counter = litellm_token.SimpleTokenCounter(100)
+        rust_counter = _rust.SimpleTokenCounter(100)
         python_encoder = tiktoken.encoding_for_model(model)
         
         # Warm up
@@ -77,14 +77,14 @@ def test_rate_limiting_performance():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
         # Test parameters
         iterations = 10000
         print(f"Iterations: {iterations}")
         
         # Create rate limiter
-        rust_limiter = litellm_token.SimpleRateLimiter()
+        rust_limiter = _rust.SimpleRateLimiter()
         
         # Rust rate limiting performance
         start_time = time.time()
@@ -115,7 +115,7 @@ def test_complex_operations_performance():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
         # Import Python for comparison
         import json
@@ -139,7 +139,7 @@ def test_complex_operations_performance():
         print(f"Iterations: {iterations}")
         
         # Rust JSON processing (simulated - we'll just do string operations)
-        rust_counter = litellm_token.SimpleTokenCounter(100)
+        rust_counter = _rust.SimpleTokenCounter(100)
         
         start_time = time.time()
         for i in range(iterations):

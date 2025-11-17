@@ -9,10 +9,10 @@ include Cargo.toml
 recursive-include src *.rs
 
 # Include Python package files
-recursive-include litellm_rust *.py *.pyi py.typed
+recursive-include fast_litellm *.py *.pyi py.typed
 
 # Include configuration files
-include litellm_rust/*.json
+include fast_litellm/*.json
 
 # Include documentation
 recursive-include docs *.md

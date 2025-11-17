@@ -15,15 +15,15 @@ def test_core_optimizations():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
-        print("✓ Successfully imported litellm_token")
+        print("✓ Successfully imported _rust")
         
         # Test 1: Token counting accuracy
         print("\n--- Token Counting Accuracy ---")
         
         # Create token counter
-        token_counter = litellm_token.SimpleTokenCounter(100)
+        token_counter = _rust.SimpleTokenCounter(100)
         print(f"✓ Created SimpleTokenCounter with cache size: {token_counter.cache_size}")
         
         # Test with various texts and models
@@ -75,7 +75,7 @@ def test_core_optimizations():
         print("\n--- Rate Limiting Functionality ---")
         
         # Create rate limiter
-        rate_limiter = litellm_token.SimpleRateLimiter()
+        rate_limiter = _rust.SimpleRateLimiter()
         print("✓ Created SimpleRateLimiter")
         
         # Test rate limit check
@@ -105,7 +105,7 @@ def test_core_optimizations():
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_token: {e}")
+        print(f"✗ Failed to import _rust: {e}")
         return False
     except Exception as e:
         print(f"✗ Error during core optimization test: {e}")

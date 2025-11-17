@@ -64,8 +64,8 @@ def investigate_threading_overhead():
     
     # Rust sequential
     try:
-        import litellm_core
-        from litellm_core import RoutingStrategy, RouterConfig, AdvancedRouter, Deployment
+        import fast_litellm
+        from fast_litellm import RoutingStrategy, RouterConfig, AdvancedRouter, Deployment
         
         config = RouterConfig(
             routing_strategy=RoutingStrategy.LeastBusy,
@@ -94,7 +94,7 @@ def investigate_threading_overhead():
         print(f"✓ Rust sequential: {rust_seq_time:.4f}s ({concurrent_requests/rust_seq_time:.0f} req/sec)")
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_core: {e}")
+        print(f"✗ Failed to import fast_litellm: {e}")
         return False
     
     # Compare sequential performance

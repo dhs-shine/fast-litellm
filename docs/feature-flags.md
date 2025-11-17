@@ -1,6 +1,6 @@
 # Feature Flags Guide
 
-Complete guide to feature flag configuration and deployment strategies in LiteLLM Rust.
+Complete guide to feature flag configuration and deployment strategies in Fast LiteLLM.
 
 ## Overview
 
@@ -32,19 +32,19 @@ Simple on/off control and percentage rollouts:
 
 ```bash
 # Global disable
-export LITELLM_RUST_DISABLE_ALL=true
+export FAST_LITELLM_DISABLE_ALL=true
 
 # Individual feature control
-export LITELLM_RUST_RUST_ROUTING=false
-export LITELLM_RUST_RUST_TOKEN_COUNTING=true
-export LITELLM_RUST_BATCH_TOKEN_COUNTING=canary:10
-export LITELLM_RUST_ASYNC_ROUTING=rollout:25
+export FAST_LITELLM_RUST_ROUTING=false
+export FAST_LITELLM_RUST_TOKEN_COUNTING=true
+export FAST_LITELLM_BATCH_TOKEN_COUNTING=canary:10
+export FAST_LITELLM_ASYNC_ROUTING=rollout:25
 
 # Configuration file
-export LITELLM_RUST_FEATURE_CONFIG=/path/to/config.json
+export FAST_LITELLM_FEATURE_CONFIG=/path/to/config.json
 
 # Alert settings
-export LITELLM_RUST_ALERT_FILE=/var/log/litellm_alerts.log
+export FAST_LITELLM_ALERT_FILE=/var/log/litellm_alerts.log
 ```
 
 ### 2. JSON Configuration File
@@ -96,15 +96,15 @@ Advanced configuration with thresholds and dependencies:
 Runtime feature flag management:
 
 ```python
-import litellm_rust
+import fast_litellm
 
 # Check feature status
-enabled = litellm_rust.is_enabled("rust_routing")
-status = litellm_rust.get_feature_status()
+enabled = fast_litellm.is_enabled("rust_routing")
+status = fast_litellm.get_feature_status()
 
 # Reset error counts
-litellm_rust.reset_errors("rust_routing")
-litellm_rust.reset_errors()  # Reset all
+fast_litellm.reset_errors("rust_routing")
+fast_litellm.reset_errors()  # Reset all
 ```
 
 ## Available Features
@@ -134,7 +134,7 @@ Start with a small percentage of traffic:
 
 ```bash
 # Enable for 5% of traffic
-export LITELLM_RUST_NEW_FEATURE=canary:5
+export FAST_LITELLM_NEW_FEATURE=canary:5
 ```
 
 **Benefits**:
@@ -153,16 +153,16 @@ Progressive percentage increase:
 
 ```bash
 # Week 1: 10%
-export LITELLM_RUST_FEATURE=rollout:10
+export FAST_LITELLM_FEATURE=rollout:10
 
 # Week 2: 25%
-export LITELLM_RUST_FEATURE=rollout:25
+export FAST_LITELLM_FEATURE=rollout:25
 
 # Week 3: 50%
-export LITELLM_RUST_FEATURE=rollout:50
+export FAST_LITELLM_FEATURE=rollout:50
 
 # Week 4: 100%
-export LITELLM_RUST_FEATURE=enabled
+export FAST_LITELLM_FEATURE=enabled
 ```
 
 **Timeline**:
@@ -232,10 +232,10 @@ Features disable when performance thresholds are breached:
 ### Built-in Monitoring
 
 ```python
-import litellm_rust
+import fast_litellm
 
 # Get feature status
-status = litellm_rust.get_feature_status()
+status = fast_litellm.get_feature_status()
 print(f"Features enabled: {status['global_status']['enabled_features']}")
 
 # Check specific feature
@@ -249,7 +249,7 @@ for feature, data in status['features'].items():
 
 ```bash
 # File-based alerts
-export LITELLM_RUST_ALERT_FILE=/var/log/litellm_alerts.log
+export FAST_LITELLM_ALERT_FILE=/var/log/litellm_alerts.log
 
 # Alert levels
 # - warning: Performance degradation
@@ -260,7 +260,7 @@ export LITELLM_RUST_ALERT_FILE=/var/log/litellm_alerts.log
 
 ```python
 # Export metrics for external monitoring
-metrics = litellm_rust.export_performance_data(format="json")
+metrics = fast_litellm.export_performance_data(format="json")
 
 # Parse and send to monitoring system
 import json
@@ -312,33 +312,33 @@ send_to_monitoring_system(data)
 **Feature not enabling**:
 ```bash
 # Check configuration
-python -c "import litellm_rust; print(litellm_rust.get_feature_status())"
+python -c "import fast_litellm; print(fast_litellm.get_feature_status())"
 
 # Check environment variables
-env | grep LITELLM_RUST
+env | grep FAST_LITELLM
 ```
 
 **Automatic degradation triggered**:
 ```bash
 # Check error counts
 python -c "
-import litellm_rust
-status = litellm_rust.get_feature_status()
+import fast_litellm
+status = fast_litellm.get_feature_status()
 for f, d in status['features'].items():
     if d['error_count'] > 0:
         print(f'{f}: {d[\"error_count\"]} errors')
 "
 
 # Reset errors
-python -c "import litellm_rust; litellm_rust.reset_errors()"
+python -c "import fast_litellm; fast_litellm.reset_errors()"
 ```
 
 **Performance issues**:
 ```bash
 # Check performance metrics
 python -c "
-import litellm_rust
-stats = litellm_rust.get_performance_stats()
+import fast_litellm
+stats = fast_litellm.get_performance_stats()
 for component, data in stats.items():
     print(f'{component}: {data[\"avg_duration_ms\"]}ms avg')
 "
@@ -350,8 +350,8 @@ Enable debug logging for detailed information:
 
 ```bash
 export RUST_LOG=debug
-export LITELLM_RUST_DEBUG=true
-python -c "import litellm_rust"
+export FAST_LITELLM_DEBUG=true
+python -c "import fast_litellm"
 ```
 
 ## Security Considerations

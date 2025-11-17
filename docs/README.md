@@ -1,6 +1,6 @@
-# LiteLLM Rust Documentation
+# Fast LiteLLM Documentation
 
-Comprehensive documentation for LiteLLM Rust acceleration.
+Comprehensive documentation for Fast LiteLLM acceleration.
 
 ## Quick Links
 
@@ -37,7 +37,7 @@ Comprehensive documentation for LiteLLM Rust acceleration.
 
 ### Rust Acceleration
 
-LiteLLM Rust provides high-performance implementations of critical LiteLLM components:
+Fast LiteLLM provides high-performance implementations of critical LiteLLM components:
 
 - **Token Counting**: 5-20x faster with batch processing
 - **Request Routing**: 3-8x faster with lock-free data structures
@@ -67,7 +67,7 @@ Production-ready observability:
 ### Basic Usage
 
 ```python
-import litellm_rust  # Automatic acceleration applied
+import fast_litellm  # Automatic acceleration applied
 import litellm
 
 response = litellm.completion(
@@ -80,18 +80,18 @@ response = litellm.completion(
 
 ```python
 # Check if features are enabled
-routing_enabled = litellm_rust.is_enabled("rust_routing")
-token_enabled = litellm_rust.is_enabled("rust_token_counting")
+routing_enabled = fast_litellm.is_enabled("rust_routing")
+token_enabled = fast_litellm.is_enabled("rust_token_counting")
 
 # Get comprehensive status
-status = litellm_rust.get_feature_status()
+status = fast_litellm.get_feature_status()
 ```
 
 ### Performance Monitoring
 
 ```python
 # Record custom metrics
-litellm_rust.record_performance(
+fast_litellm.record_performance(
     component="rust_token_counting",
     operation="count_tokens",
     duration_ms=15.5,
@@ -99,19 +99,19 @@ litellm_rust.record_performance(
 )
 
 # Get performance statistics
-stats = litellm_rust.get_performance_stats()
-recommendations = litellm_rust.get_recommendations()
+stats = fast_litellm.get_performance_stats()
+recommendations = fast_litellm.get_recommendations()
 ```
 
 ### Configuration
 
 ```bash
 # Environment variables
-export LITELLM_RUST_RUST_ROUTING=true
-export LITELLM_RUST_BATCH_TOKEN_COUNTING=canary:10
+export FAST_LITELLM_RUST_ROUTING=true
+export FAST_LITELLM_BATCH_TOKEN_COUNTING=canary:10
 
 # JSON configuration file
-export LITELLM_RUST_FEATURE_CONFIG=/path/to/config.json
+export FAST_LITELLM_FEATURE_CONFIG=/path/to/config.json
 ```
 
 ## Deployment Guide
@@ -149,4 +149,4 @@ We welcome contributions! See our [Contributing Guide](contributing.md) for:
 
 ---
 
-For the most up-to-date information, visit the [GitHub repository](https://github.com/your-username/litellm-rust).
+For the most up-to-date information, visit the [GitHub repository](https://github.com/neul-labs/fast-litellm).

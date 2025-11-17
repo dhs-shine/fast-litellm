@@ -1,4 +1,4 @@
-# Type stubs for litellm_rust
+# Type stubs for fast_litellm
 
 from typing import Dict, List, Optional, Any, Union
 

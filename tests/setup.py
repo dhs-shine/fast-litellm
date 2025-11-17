@@ -9,37 +9,37 @@ with open("README_pypi.md", "r", encoding="utf-8") as fh:
 # Define the Rust extensions
 rust_extensions = [
     RustExtension(
-        "litellm_rust.litellm_core",
+        "fast_litellm.fast_litellm",
         path="litellm-core/Cargo.toml",
         binding=Binding.PyO3,
     ),
     RustExtension(
-        "litellm_rust.litellm_token",
+        "fast_litellm._rust",
         path="litellm-token/Cargo.toml",
         binding=Binding.PyO3,
     ),
     RustExtension(
-        "litellm_rust.litellm_connection_pool",
+        "fast_litellm._rust",
         path="litellm-connection-pool/Cargo.toml",
         binding=Binding.PyO3,
     ),
     RustExtension(
-        "litellm_rust.litellm_rate_limiter",
+        "fast_litellm._rust",
         path="litellm-rate-limiter/Cargo.toml",
         binding=Binding.PyO3,
     ),
 ]
 
 setup(
-    name="litellm-rust",
+    name="fast-litellm",
     version="0.1.0",
     author="Your Name",
     author_email="your.email@example.com",
     description="High-performance Rust acceleration for LiteLLM",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/your-username/litellm-rust",
-    packages=["litellm_rust"],
+    url="https://github.com/your-username/fast-litellm",
+    packages=["fast_litellm"],
     rust_extensions=rust_extensions,
     zip_safe=False,  # Required for Rust extensions
     classifiers=[

@@ -15,16 +15,16 @@ def test_basic_compilation():
     
     try:
         # Try to import the Rust module
-        import litellm_core
+        import fast_litellm
         
-        print("✓ Successfully imported litellm_core")
+        print("✓ Successfully imported fast_litellm")
         
         # Test health check
-        health = litellm_core.health_check()
+        health = fast_litellm.health_check()
         print(f"✓ Health check returned: {health}")
         
         # Test core components
-        core = litellm_core.LiteLLMCore()
+        core = fast_litellm.LiteLLMCore()
         print(f"✓ Created LiteLLMCore instance")
         print(f"✓ Core available: {core.is_available()}")
         
@@ -32,7 +32,7 @@ def test_basic_compilation():
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_core: {e}")
+        print(f"✗ Failed to import fast_litellm: {e}")
         print("This is expected if the module isn't properly built or in the Python path")
         return False
     except Exception as e:

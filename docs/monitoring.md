@@ -1,6 +1,6 @@
 # Performance Monitoring Guide
 
-Comprehensive guide to monitoring, alerting, and optimizing LiteLLM Rust acceleration performance.
+Comprehensive guide to monitoring, alerting, and optimizing Fast LiteLLM acceleration performance.
 
 ## Overview
 
@@ -35,10 +35,10 @@ For each metric, the system calculates:
 ### Basic Monitoring
 
 ```python
-import litellm_rust
+import fast_litellm
 
 # Get real-time statistics
-stats = litellm_rust.get_performance_stats()
+stats = fast_litellm.get_performance_stats()
 
 # Display component performance
 for component, data in stats.items():
@@ -54,8 +54,8 @@ for component, data in stats.items():
 
 ```python
 # Monitor specific component
-routing_stats = litellm_rust.get_performance_stats("rust_routing")
-token_stats = litellm_rust.get_performance_stats("rust_token_counting")
+routing_stats = fast_litellm.get_performance_stats("rust_routing")
+token_stats = fast_litellm.get_performance_stats("rust_token_counting")
 
 # Check component health
 if routing_stats['error_rate'] > 5.0:
@@ -75,7 +75,7 @@ def monitor_performance():
     """Background monitoring with alerts."""
     while True:
         try:
-            stats = litellm_rust.get_performance_stats()
+            stats = fast_litellm.get_performance_stats()
 
             for component, data in stats.items():
                 # Check thresholds
@@ -102,7 +102,7 @@ monitor_thread.start()
 
 ```python
 # Compare implementations
-comparison = litellm_rust.compare_implementations(
+comparison = fast_litellm.compare_implementations(
     "rust_routing",
     "python_routing"
 )
@@ -132,7 +132,7 @@ def run_performance_benchmark():
     duration = (time.perf_counter() - start_time) * 1000
 
     # Record benchmark result
-    litellm_rust.record_performance(
+    fast_litellm.record_performance(
         component="benchmark_token_counting",
         operation="batch_100",
         duration_ms=duration,
@@ -165,7 +165,7 @@ The system provides automatic alerts for:
 # Environment-based alert configuration
 import os
 
-os.environ['LITELLM_RUST_ALERT_FILE'] = '/var/log/litellm_alerts.log'
+os.environ['FAST_LITELLM_ALERT_FILE'] = '/var/log/litellm_alerts.log'
 
 # Alerts are automatically written to the file:
 # {
@@ -234,7 +234,7 @@ setup_custom_alerting()
 
 ```python
 # Get optimization recommendations
-recommendations = litellm_rust.get_recommendations()
+recommendations = fast_litellm.get_recommendations()
 
 for rec in recommendations:
     print(f"\n{rec['type'].upper()} - {rec['severity']}")
@@ -259,7 +259,7 @@ Based on monitoring data, the system provides recommendations for:
   "component": "rust_token_counting",
   "message": "Average latency: 150ms exceeds 100ms threshold",
   "suggestions": [
-    "Increase token cache size (LITELLM_RUST_TOKEN_CACHE_SIZE)",
+    "Increase token cache size (FAST_LITELLM_TOKEN_CACHE_SIZE)",
     "Enable batch processing for multiple texts",
     "Check for memory pressure",
     "Verify model encoding cache hit rate"
@@ -307,13 +307,13 @@ Based on monitoring data, the system provides recommendations for:
 
 ```python
 # Export as JSON for analysis
-json_data = litellm_rust.export_performance_data(format="json")
+json_data = fast_litellm.export_performance_data(format="json")
 
 # Export as CSV for spreadsheets
-csv_data = litellm_rust.export_performance_data(format="csv")
+csv_data = fast_litellm.export_performance_data(format="csv")
 
 # Export specific component
-routing_data = litellm_rust.export_performance_data(
+routing_data = fast_litellm.export_performance_data(
     component="rust_routing",
     format="json"
 )
@@ -326,21 +326,21 @@ routing_data = litellm_rust.export_performance_data(
 ```python
 # Export metrics for Prometheus
 def export_to_prometheus():
-    stats = litellm_rust.get_performance_stats()
+    stats = fast_litellm.get_performance_stats()
 
     metrics = []
     for component, data in stats.items():
         metrics.extend([
-            f'litellm_rust_latency_avg{{component="{component}"}} {data["avg_duration_ms"]}',
-            f'litellm_rust_latency_p95{{component="{component}"}} {data["p95_duration_ms"]}',
-            f'litellm_rust_error_rate{{component="{component}"}} {data["error_rate"]}',
-            f'litellm_rust_throughput{{component="{component}"}} {data["throughput_per_second"]}',
+            f'fast_litellm_latency_avg{{component="{component}"}} {data["avg_duration_ms"]}',
+            f'fast_litellm_latency_p95{{component="{component}"}} {data["p95_duration_ms"]}',
+            f'fast_litellm_error_rate{{component="{component}"}} {data["error_rate"]}',
+            f'fast_litellm_throughput{{component="{component}"}} {data["throughput_per_second"]}',
         ])
 
     return '\n'.join(metrics)
 
 # Write to Prometheus text file
-with open('/var/lib/prometheus/node-exporter/litellm_rust.prom', 'w') as f:
+with open('/var/lib/prometheus/node-exporter/fast_litellm.prom', 'w') as f:
     f.write(export_to_prometheus())
 ```
 
@@ -351,7 +351,7 @@ import datadog
 
 def send_to_datadog():
     """Send metrics to DataDog."""
-    stats = litellm_rust.get_performance_stats()
+    stats = fast_litellm.get_performance_stats()
 
     for component, data in stats.items():
         datadog.statsd.gauge(
@@ -374,11 +374,11 @@ import json
 
 def send_metrics_webhook(webhook_url):
     """Send metrics to custom webhook."""
-    stats = litellm_rust.get_performance_stats()
+    stats = fast_litellm.get_performance_stats()
 
     payload = {
         "timestamp": datetime.now().isoformat(),
-        "service": "litellm-rust",
+        "service": "fast-litellm",
         "metrics": stats
     }
 
@@ -405,10 +405,10 @@ def show_dashboard():
     while True:
         os.system('clear' if os.name == 'posix' else 'cls')
 
-        print("🚀 LiteLLM Rust Performance Dashboard")
+        print("🚀 Fast LiteLLM Performance Dashboard")
         print("=" * 50)
 
-        stats = litellm_rust.get_performance_stats()
+        stats = fast_litellm.get_performance_stats()
 
         for component, data in stats.items():
             status = "🟢" if data['error_rate'] < 1 else "🟡" if data['error_rate'] < 5 else "🔴"
@@ -419,7 +419,7 @@ def show_dashboard():
             print(f"   Throughput: {data['throughput_per_second']:.1f} ops/sec")
 
         # Show recommendations
-        recommendations = litellm_rust.get_recommendations()
+        recommendations = fast_litellm.get_recommendations()
         if recommendations:
             print(f"\n⚠️  {len(recommendations)} Recommendations:")
             for rec in recommendations[:3]:  # Show top 3
@@ -439,18 +439,18 @@ show_dashboard()
 ```json
 {
   "dashboard": {
-    "title": "LiteLLM Rust Performance",
+    "title": "Fast LiteLLM Performance",
     "panels": [
       {
         "title": "Latency by Component",
         "type": "graph",
         "targets": [
           {
-            "expr": "litellm_rust_latency_avg",
+            "expr": "fast_litellm_latency_avg",
             "legendFormat": "{{component}} - Average"
           },
           {
-            "expr": "litellm_rust_latency_p95",
+            "expr": "fast_litellm_latency_p95",
             "legendFormat": "{{component}} - P95"
           }
         ]
@@ -460,7 +460,7 @@ show_dashboard()
         "type": "graph",
         "targets": [
           {
-            "expr": "litellm_rust_error_rate",
+            "expr": "fast_litellm_error_rate",
             "legendFormat": "{{component}}"
           }
         ]
@@ -470,7 +470,7 @@ show_dashboard()
         "type": "graph",
         "targets": [
           {
-            "expr": "litellm_rust_throughput",
+            "expr": "fast_litellm_throughput",
             "legendFormat": "{{component}}"
           }
         ]
@@ -489,7 +489,7 @@ show_dashboard()
 ```python
 def diagnose_high_latency(component):
     """Diagnose high latency issues."""
-    stats = litellm_rust.get_performance_stats(component)
+    stats = fast_litellm.get_performance_stats(component)
 
     if stats['avg_duration_ms'] > 1000:
         print(f"⚠️ High latency detected in {component}")

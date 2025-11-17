@@ -43,7 +43,7 @@ jobs:
 
     - name: Run tests
       run: |
-        python -m pytest tests/ -v --cov=litellm_rust --cov-report=xml
+        python -m pytest tests/ -v --cov=fast_litellm --cov-report=xml
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
@@ -83,7 +83,7 @@ jobs:
       run: flake8 .
 
     - name: Type check Python
-      run: mypy litellm_rust/
+      run: mypy fast_litellm/
 
     - name: Format Rust code
       run: cargo fmt --all -- --check

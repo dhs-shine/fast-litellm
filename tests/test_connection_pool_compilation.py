@@ -15,19 +15,19 @@ def test_basic_compilation():
     
     try:
         # Try to import the Rust module
-        import litellm_connection_pool
+        import _rust
         
-        print("✓ Successfully imported litellm_connection_pool")
+        print("✓ Successfully imported _rust")
         
         # Test health check
-        health = litellm_connection_pool.connection_pool_health_check()
+        health = _rust.connection_pool_health_check()
         print(f"✓ Health check returned: {health}")
         
         print("\n🎉 Basic compilation test passed!")
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_connection_pool: {e}")
+        print(f"✗ Failed to import _rust: {e}")
         print("This is expected if the module isn't properly built or in the Python path")
         return False
     except Exception as e:

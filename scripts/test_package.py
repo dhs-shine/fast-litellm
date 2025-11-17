@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script for litellm-rust package build and installation
+Test script for fast-litellm package build and installation
 """
 
 import subprocess
@@ -116,16 +116,16 @@ def test_package_installation(wheel_path):
         test_script = '''
 import sys
 try:
-    import litellm_rust
-    print(f"✅ Successfully imported litellm_rust")
-    print(f"Version: {getattr(litellm_rust, '__version__', 'unknown')}")
-    print(f"Rust acceleration available: {getattr(litellm_rust, 'RUST_ACCELERATION_AVAILABLE', 'unknown')}")
+    import fast_litellm
+    print(f"✅ Successfully imported fast_litellm")
+    print(f"Version: {getattr(fast_litellm, '__version__', 'unknown')}")
+    print(f"Rust acceleration available: {getattr(fast_litellm, 'RUST_ACCELERATION_AVAILABLE', 'unknown')}")
 
     # Test basic functionality
-    health = litellm_rust.health_check()
+    health = fast_litellm.health_check()
     print(f"Health check: {health}")
 
-    status = litellm_rust.get_feature_status()
+    status = fast_litellm.get_feature_status()
     print(f"Feature status: {status}")
 
     print("✅ All basic tests passed!")

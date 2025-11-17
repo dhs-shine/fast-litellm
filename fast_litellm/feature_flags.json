@@ -47,6 +47,6 @@
     "enable_automatic_degradation": true,
     "enable_performance_alerts": true,
     "metrics_retention_hours": 24,
-    "alert_file": "/tmp/litellm_rust_alerts.log"
+    "alert_file": "/tmp/fast_litellm_alerts.log"
   }
 }

@@ -12,14 +12,14 @@ def test_router_compatibility():
     
     try:
         # Import the Rust extensions
-        import litellm_rust.rust_extensions as rust_ext
+        import fast_litellm.rust_extensions as rust_ext
         
         if not rust_ext.RUST_ACCELERATION_AVAILABLE:
             print("⚠ Rust acceleration not available, skipping Router compatibility test")
             return True
             
         # Test AdvancedRouter constructor with Python Router parameters
-        router = rust_ext.litellm_core.AdvancedRouter(
+        router = rust_ext.fast_litellm.AdvancedRouter(
             model_list=None,
             routing_strategy="least-busy",
             cooldown_time=60,
@@ -62,7 +62,7 @@ def test_deployment_compatibility():
     
     try:
         # Import the Rust extensions
-        import litellm_rust.rust_extensions as rust_ext
+        import fast_litellm.rust_extensions as rust_ext
         
         if not rust_ext.RUST_ACCELERATION_AVAILABLE:
             print("⚠ Rust acceleration not available, skipping Deployment compatibility test")
@@ -81,7 +81,7 @@ def test_deployment_compatibility():
             model_info.set_item("id", "test-model")
             
             # Test constructor with all parameters
-            deployment = rust_ext.litellm_core.Deployment(
+            deployment = rust_ext.fast_litellm.Deployment(
                 "test-model",
                 litellm_params,
                 model_info
@@ -90,7 +90,7 @@ def test_deployment_compatibility():
             print("✓ Deployment constructor with all parameters works")
             
             # Test constructor with optional model_info
-            deployment2 = rust_ext.litellm_core.Deployment(
+            deployment2 = rust_ext.fast_litellm.Deployment(
                 "test-model-2",
                 litellm_params,
                 None
@@ -120,22 +120,22 @@ def test_routing_strategy_compatibility():
     
     try:
         # Import the Rust extensions
-        import litellm_rust.rust_extensions as rust_ext
+        import fast_litellm.rust_extensions as rust_ext
         
         if not rust_ext.RUST_ACCELERATION_AVAILABLE:
             print("⚠ Rust acceleration not available, skipping RoutingStrategy compatibility test")
             return True
             
         # Test RoutingStrategy constructor with string values (Python style)
-        strategy1 = rust_ext.litellm_core.RoutingStrategy("least-busy")
-        strategy2 = rust_ext.litellm_core.RoutingStrategy("usage-based-routing")
-        strategy3 = rust_ext.litellm_core.RoutingStrategy("simple-shuffle")
+        strategy1 = rust_ext.fast_litellm.RoutingStrategy("least-busy")
+        strategy2 = rust_ext.fast_litellm.RoutingStrategy("usage-based-routing")
+        strategy3 = rust_ext.fast_litellm.RoutingStrategy("simple-shuffle")
         
         print("✓ RoutingStrategy constructor with string values works")
         
         # Test RoutingStrategy constructor with integer values (Rust style)
-        strategy4 = rust_ext.litellm_core.RoutingStrategy(0)  # SimpleShuffle
-        strategy5 = rust_ext.litellm_core.RoutingStrategy(1)  # LeastBusy
+        strategy4 = rust_ext.fast_litellm.RoutingStrategy(0)  # SimpleShuffle
+        strategy5 = rust_ext.fast_litellm.RoutingStrategy(1)  # LeastBusy
         
         print("✓ RoutingStrategy constructor with integer values works")
         
@@ -159,15 +159,15 @@ def test_router_config_compatibility():
     
     try:
         # Import the Rust extensions
-        import litellm_rust.rust_extensions as rust_ext
+        import fast_litellm.rust_extensions as rust_ext
         
         if not rust_ext.RUST_ACCELERATION_AVAILABLE:
             print("⚠ Rust acceleration not available, skipping RouterConfig compatibility test")
             return True
             
         # Test RouterConfig constructor
-        strategy = rust_ext.litellm_core.RoutingStrategy("least-busy")
-        config = rust_ext.litellm_core.RouterConfig(
+        strategy = rust_ext.fast_litellm.RoutingStrategy("least-busy")
+        config = rust_ext.fast_litellm.RouterConfig(
             routing_strategy=strategy,
             cooldown_time_seconds=60,
             max_retries=3,
@@ -196,10 +196,10 @@ def main():
     
     # Check if we can import the package
     try:
-        import litellm_rust
-        print("✓ litellm_rust package imported successfully")
+        import fast_litellm
+        print("✓ fast_litellm package imported successfully")
     except ImportError as e:
-        print(f"✗ Failed to import litellm_rust: {e}")
+        print(f"✗ Failed to import fast_litellm: {e}")
         return False
     
     # Run individual tests

@@ -6,10 +6,10 @@ from typing import Any, Dict, Optional
 
 from .rust_extensions import (
     RUST_ACCELERATION_AVAILABLE,
-    litellm_core,
-    litellm_token,
-    litellm_connection_pool,
-    litellm_rate_limiter,
+    fast_litellm,
+    _rust,
+    _rust,
+    _rust,
 )
 from . import monkeypatch
 
@@ -37,10 +37,10 @@ def apply_acceleration() -> bool:
         
         mock_module = MockRustExtensions()
         mock_module.RUST_ACCELERATION_AVAILABLE = RUST_ACCELERATION_AVAILABLE
-        mock_module.litellm_core = litellm_core
-        mock_module.litellm_token = litellm_token
-        mock_module.litellm_connection_pool = litellm_connection_pool
-        mock_module.litellm_rate_limiter = litellm_rate_limiter
+        mock_module.fast_litellm = fast_litellm
+        mock_module._rust = _rust
+        mock_module._rust = _rust
+        mock_module._rust = _rust
         
         return monkeypatch.apply_acceleration(mock_module)
     except Exception as e:

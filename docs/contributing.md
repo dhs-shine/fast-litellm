@@ -1,6 +1,6 @@
-# Contributing to LiteLLM Rust
+# Contributing to Fast LiteLLM
 
-Thank you for your interest in contributing to LiteLLM Rust! This guide will help you get started with development and contributing to the project.
+Thank you for your interest in contributing to Fast LiteLLM! This guide will help you get started with development and contributing to the project.
 
 ## Development Setup
 
@@ -15,8 +15,8 @@ Thank you for your interest in contributing to LiteLLM Rust! This guide will hel
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/litellm-rust.git
-   cd litellm-rust
+   git clone https://github.com/neul-labs/fast-litellm.git
+   cd fast-litellm
    ```
 
 2. **Set up Python environment**:
@@ -45,12 +45,12 @@ Thank you for your interest in contributing to LiteLLM Rust! This guide will hel
 ## Project Structure
 
 ```
-litellm-rust/
+fast-litellm/
 ├── litellm-core/           # Rust: Advanced routing
 ├── litellm-token/          # Rust: Token counting
 ├── litellm-connection-pool/# Rust: Connection management
 ├── litellm-rate-limiter/   # Rust: Rate limiting
-├── litellm_rust/           # Python: Integration layer
+├── fast_litellm/           # Python: Integration layer
 │   ├── enhanced_monkeypatch.py
 │   ├── feature_flags.py
 │   ├── performance_monitor.py
@@ -199,11 +199,11 @@ Use pytest in the `tests/` directory:
 
 ```python
 import pytest
-import litellm_rust
+import fast_litellm
 
 def test_feature_flag_enabled():
     """Test feature flag functionality."""
-    assert isinstance(litellm_rust.is_enabled("rust_routing"), bool)
+    assert isinstance(fast_litellm.is_enabled("rust_routing"), bool)
 
 @pytest.mark.asyncio
 async def test_async_wrapper():
@@ -255,10 +255,10 @@ When adding new features:
 ```bash
 # Debug Rust components
 export RUST_LOG=debug
-python -c "import litellm_rust; print('Debug enabled')"
+python -c "import fast_litellm; print('Debug enabled')"
 
 # Enable performance monitoring
-export LITELLM_RUST_PERFORMANCE_MONITORING=true
+export FAST_LITELLM_PERFORMANCE_MONITORING=true
 ```
 
 ### Common Issues
@@ -384,4 +384,4 @@ May be invited to become maintainers.
 4. Implement gradual rollout logic
 5. Add monitoring and alerts
 
-Thank you for contributing to LiteLLM Rust! Your contributions help make high-performance LLM operations accessible to everyone.
+Thank you for contributing to Fast LiteLLM! Your contributions help make high-performance LLM operations accessible to everyone.

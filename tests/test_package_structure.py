@@ -6,25 +6,25 @@ Test script to verify that the package structure is correct and can be imported.
 def test_package_import():
     """Test that the package can be imported."""
     try:
-        import litellm_rust
-        print("✓ litellm_rust package imported successfully")
-        print(f"  Version: {litellm_rust.__version__}")
-        print(f"  Rust acceleration available: {litellm_rust.RUST_ACCELERATION_AVAILABLE}")
+        import fast_litellm
+        print("✓ fast_litellm package imported successfully")
+        print(f"  Version: {fast_litellm.__version__}")
+        print(f"  Rust acceleration available: {fast_litellm.RUST_ACCELERATION_AVAILABLE}")
         return True
     except ImportError as e:
-        print(f"✗ Failed to import litellm_rust: {e}")
+        print(f"✗ Failed to import fast_litellm: {e}")
         return False
 
 def test_package_components():
     """Test that package components can be accessed."""
     try:
-        import litellm_rust
+        import fast_litellm
         
         # Test that key functions are available
-        assert hasattr(litellm_rust, 'apply_acceleration')
-        assert hasattr(litellm_rust, 'remove_acceleration')
-        assert hasattr(litellm_rust, 'health_check')
-        assert hasattr(litellm_rust, 'get_performance_stats')
+        assert hasattr(fast_litellm, 'apply_acceleration')
+        assert hasattr(fast_litellm, 'remove_acceleration')
+        assert hasattr(fast_litellm, 'health_check')
+        assert hasattr(fast_litellm, 'get_performance_stats')
         
         print("✓ All package components are accessible")
         return True
@@ -35,14 +35,14 @@ def test_package_components():
 def test_rust_extensions():
     """Test that Rust extensions can be imported."""
     try:
-        import litellm_rust
+        import fast_litellm
         
-        if litellm_rust.RUST_ACCELERATION_AVAILABLE:
+        if fast_litellm.RUST_ACCELERATION_AVAILABLE:
             # Try to import the Rust extensions directly
-            from litellm_rust import litellm_core
-            from litellm_rust import litellm_token
-            from litellm_rust import litellm_connection_pool
-            from litellm_rust import litellm_rate_limiter
+            from fast_litellm import fast_litellm
+            from fast_litellm import _rust
+            from fast_litellm import _rust
+            from fast_litellm import _rust
             
             print("✓ All Rust extensions imported successfully")
             return True

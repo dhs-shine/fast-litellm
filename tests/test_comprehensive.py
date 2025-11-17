@@ -15,7 +15,7 @@ def test_comparison_with_python():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
         # Import Python tiktoken for comparison
         import tiktoken
@@ -33,7 +33,7 @@ def test_comparison_with_python():
         ]
         
         # Create token counters
-        rust_counter = litellm_token.SimpleTokenCounter(100)
+        rust_counter = _rust.SimpleTokenCounter(100)
         python_encoders = {}
         
         all_match = True
@@ -81,7 +81,7 @@ def test_performance_comparison():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
         # Import Python tiktoken for comparison
         import tiktoken
@@ -95,7 +95,7 @@ def test_performance_comparison():
         iterations = 1000
         
         # Create token counters
-        rust_counter = litellm_token.SimpleTokenCounter(100)
+        rust_counter = _rust.SimpleTokenCounter(100)
         python_encoder = tiktoken.encoding_for_model(model)
         
         # Test Rust performance

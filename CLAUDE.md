@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-LiteLLM Rust is a high-performance Rust acceleration layer for LiteLLM that provides drop-in replacements for performance-critical components. It uses PyO3 to create Python extensions from Rust code, achieving 2-20x performance improvements while maintaining full compatibility with the existing Python API.
+Fast LiteLLM is a high-performance Rust acceleration layer for LiteLLM that provides drop-in replacements for performance-critical components. It uses PyO3 to create Python extensions from Rust code, achieving 2-20x performance improvements while maintaining full compatibility with the existing Python API.
 
 ## Build Commands
 
@@ -47,7 +47,7 @@ pytest tests/test_accelerator.py
 pytest tests/test_basic.py::test_import_package
 
 # Run tests with coverage
-pytest tests/ --cov=litellm_rust --cov-report=html
+pytest tests/ --cov=fast_litellm --cov-report=html
 
 # Run tests excluding slow benchmarks
 pytest tests/ -m "not slow"
@@ -65,15 +65,15 @@ cargo test --lib core
 ### Code Quality
 ```bash
 # Python formatting
-black litellm_rust/ tests/
+black fast_litellm/ tests/
 
 # Python import sorting
-isort litellm_rust/ tests/
+isort fast_litellm/ tests/
 
 # Python linting
-flake8 litellm_rust/
-mypy litellm_rust/
-ruff check litellm_rust/
+flake8 fast_litellm/
+mypy fast_litellm/
+ruff check fast_litellm/
 
 # Rust formatting
 cargo fmt
@@ -82,7 +82,7 @@ cargo fmt
 cargo clippy -- -D warnings
 
 # Run all quality checks
-black --check . && isort --check-only . && flake8 . && mypy litellm_rust/ && cargo fmt -- --check && cargo clippy
+black --check . && isort --check-only . && flake8 . && mypy fast_litellm/ && cargo fmt -- --check && cargo clippy
 ```
 
 ## Architecture
@@ -100,7 +100,7 @@ The project has two interconnected layers:
    - `feature_flags.rs`: Gradual rollout and canary deployment system
    - `performance_monitor.rs`: Real-time metrics collection
 
-2. **Python Layer (`litellm_rust/`)**: Integration and fallback logic
+2. **Python Layer (`fast_litellm/`)**: Integration and fallback logic
    - `__init__.py`: Package entry with automatic Rust import and fallback
    - `enhanced_monkeypatch.py`: Smart patching with performance monitoring
    - `feature_flags.py`: Python-side feature flag management
@@ -111,7 +111,7 @@ The project has two interconnected layers:
 
 The system uses enhanced monkeypatching to replace LiteLLM components:
 
-1. Import detection: When `litellm_rust` is imported, it automatically attempts to load Rust extensions
+1. Import detection: When `fast_litellm` is imported, it automatically attempts to load Rust extensions
 2. Smart replacement: `PerformanceWrapper` class wraps functions with:
    - Feature flag checking (per-request rollout control)
    - Performance monitoring (timing and metrics)
@@ -130,14 +130,14 @@ The system uses enhanced monkeypatching to replace LiteLLM components:
 ### Build Configuration
 - `pyproject.toml`: Main package configuration with maturin settings
 - `Cargo.toml`: Rust package configuration with PyO3 dependencies
-- `[tool.maturin]` section: Configures module name as `litellm_rust._rust`
+- `[tool.maturin]` section: Configures module name as `fast_litellm._rust`
 
 ### Entry Points
-- `litellm_rust/__init__.py`: Main package entry, imports from `._rust` module
+- `fast_litellm/__init__.py`: Main package entry, imports from `._rust` module
 - `src/lib.rs`: Rust entry point with `#[pymodule]` definition
 
 ### Integration Points
-- The Rust module is compiled as `_rust.so` and imported as `litellm_rust._rust`
+- The Rust module is compiled as `_rust.so` and imported as `fast_litellm._rust`
 - All Rust functions are exposed via `#[pyfunction]` decorators
 - JSON data is converted between `serde_json::Value` and Python objects
 
@@ -149,7 +149,7 @@ The system uses enhanced monkeypatching to replace LiteLLM components:
 2. Export function in `src/lib.rs` with `#[pyfunction]` decorator
 3. Add to module in `lib.rs` `#[pymodule]` function
 4. Rebuild with `maturin develop`
-5. Add Python wrapper in `litellm_rust/` if needed
+5. Add Python wrapper in `fast_litellm/` if needed
 6. Add tests in `tests/`
 
 ### Testing Cycle
@@ -158,6 +158,32 @@ The system uses enhanced monkeypatching to replace LiteLLM components:
 2. Run `maturin develop` to rebuild
 3. Run `pytest tests/test_specific.py -v` to test
 4. Use `pytest tests/ -k "test_name"` for specific test
+
+### Integration Testing with LiteLLM
+
+Fast LiteLLM includes scripts to test against the actual LiteLLM library:
+
+```bash
+# Setup LiteLLM for integration testing
+./scripts/setup_litellm.sh
+
+# Run LiteLLM's tests with Fast LiteLLM acceleration
+./scripts/run_litellm_tests.sh
+
+# Run specific LiteLLM test file
+./scripts/run_litellm_tests.sh tests/test_completion.py
+
+# Compare performance with and without acceleration
+./scripts/compare_performance.py tests/test_completion.py
+```
+
+This ensures that Fast LiteLLM doesn't break any LiteLLM functionality. The scripts:
+1. Clone LiteLLM to `.litellm/` directory
+2. Apply Fast LiteLLM acceleration via monkeypatching
+3. Run LiteLLM's test suite
+4. Report results and performance metrics
+
+See [docs/testing.md](docs/testing.md) for comprehensive testing documentation.
 
 ### Performance Testing
 
@@ -170,6 +196,9 @@ python examples/benchmark.py
 
 # Profile specific operations
 pytest tests/test_performance_comparison.py -v
+
+# Full performance comparison with LiteLLM
+./scripts/compare_performance.py
 ```
 
 ## Important Context
@@ -177,11 +206,11 @@ pytest tests/test_performance_comparison.py -v
 ### LiteLLM Integration
 - This package monkeypatches the actual LiteLLM library (at `~/Github/litellm`)
 - The goal is seamless acceleration without code changes in user applications
-- Import order matters: `import litellm_rust` must come before `import litellm`
+- Import order matters: `import fast_litellm` must come before `import litellm`
 
 ### Feature Flag System
-- Configuration via `litellm_rust/feature_flags.json`
-- Environment variable overrides: `LITELLM_RUST_ENABLED=true`
+- Configuration via `fast_litellm/feature_flags.json`
+- Environment variable overrides: `FAST_LITELLM_ENABLED=true`
 - Per-feature control: `rust_routing`, `rust_token_counting`, `rust_rate_limiting`, `rust_connection_pool`
 - Gradual rollout percentages and canary deployments supported
 
@@ -207,7 +236,7 @@ pytest tests/test_performance_comparison.py -v
 ### Import Issues
 - The Rust module is named `_rust`, not `rust_extensions`
 - If import fails, check `target/wheels/` for the built wheel
-- Verify with: `python -c "import litellm_rust._rust"`
+- Verify with: `python -c "import fast_litellm._rust"`
 
 ### Performance Testing
 - Benchmarks require the actual LiteLLM library to be installed

@@ -1,6 +1,6 @@
 # API Reference
 
-Complete API documentation for LiteLLM Rust acceleration.
+Complete API documentation for Fast LiteLLM acceleration.
 
 ## Core Functions
 
@@ -9,8 +9,8 @@ Complete API documentation for LiteLLM Rust acceleration.
 Apply Rust acceleration with enhanced features.
 
 ```python
-import litellm_rust
-litellm_rust.apply_acceleration()
+import fast_litellm
+fast_litellm.apply_acceleration()
 ```
 
 **Returns**: `bool` - True if acceleration was applied successfully
@@ -20,7 +20,7 @@ litellm_rust.apply_acceleration()
 Remove Rust acceleration and restore Python implementations.
 
 ```python
-litellm_rust.remove_acceleration()
+fast_litellm.remove_acceleration()
 ```
 
 ### `health_check()`
@@ -28,7 +28,7 @@ litellm_rust.remove_acceleration()
 Perform health check on all Rust components.
 
 ```python
-health = litellm_rust.health_check()
+health = fast_litellm.health_check()
 print(f"Overall healthy: {health['overall_healthy']}")
 ```
 
@@ -41,7 +41,7 @@ print(f"Overall healthy: {health['overall_healthy']}")
 Check if a feature is enabled.
 
 ```python
-enabled = litellm_rust.is_enabled("rust_routing", "request_123")
+enabled = fast_litellm.is_enabled("rust_routing", "request_123")
 ```
 
 **Parameters**:
@@ -55,7 +55,7 @@ enabled = litellm_rust.is_enabled("rust_routing", "request_123")
 Get comprehensive feature flag status.
 
 ```python
-status = litellm_rust.get_feature_status()
+status = fast_litellm.get_feature_status()
 ```
 
 **Returns**: `Dict[str, Any]` - Complete feature flag status
@@ -65,8 +65,8 @@ status = litellm_rust.get_feature_status()
 Reset error counts for features.
 
 ```python
-litellm_rust.reset_errors("rust_routing")  # Reset specific feature
-litellm_rust.reset_errors()                # Reset all features
+fast_litellm.reset_errors("rust_routing")  # Reset specific feature
+fast_litellm.reset_errors()                # Reset all features
 ```
 
 ## Performance Monitoring
@@ -76,7 +76,7 @@ litellm_rust.reset_errors()                # Reset all features
 Record a performance metric.
 
 ```python
-litellm_rust.record_performance(
+fast_litellm.record_performance(
     component="rust_token_counting",
     operation="count_tokens",
     duration_ms=15.5,
@@ -101,10 +101,10 @@ Get performance statistics.
 
 ```python
 # Get stats for specific component
-stats = litellm_rust.get_performance_stats("rust_routing")
+stats = fast_litellm.get_performance_stats("rust_routing")
 
 # Get stats for all components
-all_stats = litellm_rust.get_performance_stats()
+all_stats = fast_litellm.get_performance_stats()
 ```
 
 **Returns**: `Dict[str, Any]` - Performance statistics
@@ -114,7 +114,7 @@ all_stats = litellm_rust.get_performance_stats()
 Compare Rust vs Python implementation performance.
 
 ```python
-comparison = litellm_rust.compare_implementations(
+comparison = fast_litellm.compare_implementations(
     "rust_routing",
     "python_routing"
 )
@@ -128,7 +128,7 @@ print(f"Speed improvement: {comparison['speed_improvement']['avg_latency']}x")
 Get optimization recommendations.
 
 ```python
-recommendations = litellm_rust.get_recommendations()
+recommendations = fast_litellm.get_recommendations()
 for rec in recommendations:
     print(f"{rec['type']}: {rec['message']}")
 ```
@@ -141,10 +141,10 @@ Export performance data.
 
 ```python
 # Export as JSON
-json_data = litellm_rust.export_performance_data(format="json")
+json_data = fast_litellm.export_performance_data(format="json")
 
 # Export specific component as CSV
-csv_data = litellm_rust.export_performance_data(
+csv_data = fast_litellm.export_performance_data(
     component="rust_routing",
     format="csv"
 )
@@ -163,7 +163,7 @@ csv_data = litellm_rust.export_performance_data(
 Get the current status of all patches.
 
 ```python
-status = litellm_rust.get_patch_status()
+status = fast_litellm.get_patch_status()
 print(f"Total patches: {status['total_patches']}")
 ```
 
@@ -176,7 +176,7 @@ print(f"Total patches: {status['total_patches']}")
 Boolean indicating if Rust acceleration is available.
 
 ```python
-if litellm_rust.RUST_ACCELERATION_AVAILABLE:
+if fast_litellm.RUST_ACCELERATION_AVAILABLE:
     print("Rust acceleration is available")
 ```
 
@@ -187,7 +187,7 @@ When Rust acceleration is available, additional APIs are exposed:
 ### Token Counting
 
 ```python
-from litellm_rust.rust_extensions import litellm_token
+from fast_litellm.rust_extensions import litellm_token
 
 counter = litellm_token.SimpleTokenCounter(cache_size=100)
 
@@ -202,22 +202,22 @@ token_counts = counter.count_tokens_batch(texts, "gpt-3.5-turbo")
 ### Advanced Routing
 
 ```python
-from litellm_rust.rust_extensions import litellm_core
+from fast_litellm.rust_extensions import fast_litellm
 
-config = litellm_core.RouterConfig(
-    routing_strategy=litellm_core.RoutingStrategy.LeastBusy,
+config = fast_litellm.RouterConfig(
+    routing_strategy=fast_litellm.RoutingStrategy.LeastBusy,
     cooldown_time_seconds=60,
     max_retries=3,
     timeout_seconds=30
 )
 
-router = litellm_core.AdvancedRouter(config)
+router = fast_litellm.AdvancedRouter(config)
 ```
 
 ### Rate Limiting
 
 ```python
-from litellm_rust.rust_extensions import litellm_rate_limiter
+from fast_litellm.rust_extensions import litellm_rate_limiter
 
 limiter = litellm_rate_limiter.SimpleRateLimiter()
 allowed = limiter.check_rate_limit("user_123", limit=100, window_seconds=60)
@@ -226,7 +226,7 @@ allowed = limiter.check_rate_limit("user_123", limit=100, window_seconds=60)
 ### Connection Pooling
 
 ```python
-from litellm_rust.rust_extensions import litellm_connection_pool
+from fast_litellm.rust_extensions import litellm_connection_pool
 
 pool = litellm_connection_pool.SimpleConnectionPool()
 # Use for HTTP connection management
@@ -246,9 +246,9 @@ The package includes comprehensive type hints for all public APIs:
 
 ```python
 from typing import Dict, List, Optional, Any
-import litellm_rust
+import fast_litellm
 
 # All functions have proper type annotations
-stats: Dict[str, Any] = litellm_rust.get_performance_stats()
-recommendations: List[Dict[str, Any]] = litellm_rust.get_recommendations()
+stats: Dict[str, Any] = fast_litellm.get_performance_stats()
+recommendations: List[Dict[str, Any]] = fast_litellm.get_recommendations()
 ```

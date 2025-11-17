@@ -17,7 +17,7 @@ def benchmark_computationally_intensive_operations():
     
     try:
         # Import both implementations
-        import litellm_token
+        import _rust
         import tiktoken
         
         print("✓ Successfully imported both Rust and Python modules")
@@ -52,7 +52,7 @@ def benchmark_computationally_intensive_operations():
         
         # Test Rust token counting performance with computationally intensive operations
         print("\n--- Rust Token Counting (Computationally Intensive) ---")
-        rust_token_counter = litellm_token.SimpleTokenCounter(100)
+        rust_token_counter = _rust.SimpleTokenCounter(100)
         
         start_time = time.time()
         rust_counts = []
@@ -108,7 +108,7 @@ def benchmark_batch_operations():
     
     try:
         # Import both implementations
-        import litellm_token
+        import _rust
         import tiktoken
         
         print("✓ Successfully imported both Rust and Python modules")
@@ -160,7 +160,7 @@ def benchmark_batch_operations():
         
         # Test Rust batch operations
         print("\n--- Rust Batch Operations ---")
-        rust_token_counter = litellm_token.SimpleTokenCounter(100)
+        rust_token_counter = _rust.SimpleTokenCounter(100)
         
         start_time = time.time()
         rust_batch_counts = rust_token_counter.count_tokens_batch(test_texts, model)
@@ -212,7 +212,7 @@ def benchmark_caching_benefits():
     
     try:
         # Import both implementations
-        import litellm_token
+        import _rust
         import tiktoken
         
         print("✓ Successfully imported both Rust and Python modules")
@@ -265,7 +265,7 @@ def benchmark_caching_benefits():
         
         # Test Rust with automatic caching
         print("\n--- Rust With Automatic Caching ---")
-        rust_token_counter = litellm_token.SimpleTokenCounter(100)
+        rust_token_counter = _rust.SimpleTokenCounter(100)
         
         start_time = time.time()
         rust_counts = []

@@ -15,16 +15,16 @@ def test_token_counting():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
-        print("✓ Successfully imported litellm_token")
+        print("✓ Successfully imported _rust")
         
         # Test health check
-        health = litellm_token.token_health_check()
+        health = _rust.token_health_check()
         print(f"✓ Health check returned: {health}")
         
         # Test token counter creation
-        token_counter = litellm_token.SimpleTokenCounter(100)
+        token_counter = _rust.SimpleTokenCounter(100)
         print(f"✓ Created SimpleTokenCounter with cache size: {token_counter.cache_size}")
         
         # Test basic token counting
@@ -52,7 +52,7 @@ def test_token_counting():
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_token: {e}")
+        print(f"✗ Failed to import _rust: {e}")
         return False
     except Exception as e:
         print(f"✗ Error testing token counting: {e}")
@@ -66,10 +66,10 @@ def test_rate_limiting():
     
     try:
         # Import the Rust module
-        import litellm_token
+        import _rust
         
         # Test rate limiter creation
-        rate_limiter = litellm_token.SimpleRateLimiter()
+        rate_limiter = _rust.SimpleRateLimiter()
         print("✓ Created SimpleRateLimiter")
         
         # Test rate limit check
@@ -93,7 +93,7 @@ def test_rate_limiting():
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_token: {e}")
+        print(f"✗ Failed to import _rust: {e}")
         return False
     except Exception as e:
         print(f"✗ Error testing rate limiting: {e}")

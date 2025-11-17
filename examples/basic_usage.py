@@ -3,21 +3,21 @@
 Example usage of LiteLLM Rust acceleration.
 """
 
-import litellm_rust
+import fast_litellm
 
 def main():
     print("LiteLLM Rust Acceleration Example")
     print("=" * 35)
     
     # Check if Rust acceleration is available
-    if litellm_rust.RUST_ACCELERATION_AVAILABLE:
+    if fast_litellm.RUST_ACCELERATION_AVAILABLE:
         print("✓ Rust acceleration is available")
     else:
         print("✗ Rust acceleration is not available")
         return
     
     # Run health check
-    from litellm_rust.diagnostics import health_check
+    from fast_litellm.diagnostics import health_check
     health = health_check()
     print(f"✓ Overall health: {health['overall_healthy']}")
     
@@ -31,8 +31,8 @@ def main():
     
     # Token counting
     try:
-        from litellm_rust.rust_extensions import litellm_token
-        counter = litellm_token.SimpleTokenCounter(100)
+        from fast_litellm.rust_extensions import _rust
+        counter = _rust.SimpleTokenCounter(100)
         text = "This is a sample text for token counting."
         token_count = counter.count_tokens(text, "gpt-3.5-turbo")
         print(f"✓ Token count for '{text}': {token_count}")
@@ -41,8 +41,8 @@ def main():
     
     # Rate limiting
     try:
-        from litellm_rust.rust_extensions import litellm_rate_limiter
-        limiter = litellm_rate_limiter.SimpleRateLimiter()
+        from fast_litellm.rust_extensions import _rust
+        limiter = _rust.SimpleRateLimiter()
         within_limit = limiter.check_rate_limit("user123", 100, 60)
         print(f"✓ Rate limit check: {within_limit}")
     except Exception as e:
@@ -50,8 +50,8 @@ def main():
     
     # Core functionality
     try:
-        from litellm_rust.rust_extensions import litellm_core
-        core = litellm_core.LiteLLMCore()
+        from fast_litellm.rust_extensions import fast_litellm
+        core = fast_litellm.LiteLLMCore()
         print(f"✓ Core available: {core.is_available()}")
     except Exception as e:
         print(f"✗ Core functionality failed: {e}")

@@ -9,14 +9,14 @@ def main():
     
     # First, import the acceleration (this will automatically apply it)
     try:
-        import litellm_rust
+        import fast_litellm
         print("✓ LiteLLM Rust Acceleration imported successfully")
     except ImportError as e:
         print(f"✗ Failed to import LiteLLM Rust Acceleration: {e}")
         return
     
     # Check if Rust acceleration is available
-    if litellm_rust.RUST_ACCELERATION_AVAILABLE:
+    if fast_litellm.RUST_ACCELERATION_AVAILABLE:
         print("✓ Rust acceleration is available and automatically applied")
     else:
         print("✗ Rust acceleration is not available")
@@ -78,7 +78,7 @@ def main():
     # Demonstrate health checks
     print("\nDemonstrating health checks:")
     try:
-        health = litellm_rust.health_check()
+        health = fast_litellm.health_check()
         print(f"✓ Overall system health check: {health.get('overall_healthy', 'Unknown')}")
     except Exception as e:
         print(f"✗ Health check failed: {e}")

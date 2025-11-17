@@ -157,6 +157,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "fast-litellm"
+version = "0.1.0"
+dependencies = [
+ "dashmap",
+ "lazy_static",
+ "pyo3",
+ "pyo3-asyncio",
+ "rand",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tiktoken-rs",
+ "tokio",
+ "tokio-test",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "futures"
 version = "0.3.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -308,25 +327,6 @@ name = "libc"
 version = "0.2.175"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6a82ae493e598baaea5209805c49bbf2ea7de956d50d7da0da1164f9c6d28543"
-
-[[package]]
-name = "litellm-rust"
-version = "0.1.0"
-dependencies = [
- "dashmap",
- "lazy_static",
- "pyo3",
- "pyo3-asyncio",
- "rand",
- "serde",
- "serde_json",
- "thiserror",
- "tiktoken-rs",
- "tokio",
- "tokio-test",
- "tracing",
- "tracing-subscriber",
-]
 
 [[package]]
 name = "lock_api"

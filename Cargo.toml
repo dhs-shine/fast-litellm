@@ -1,14 +1,14 @@
 [package]
-name = "litellm-rust"
+name = "fast-litellm"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.70"
 description = "High-performance Rust acceleration for LiteLLM"
 license = "MIT"
-repository = "https://github.com/BerriAI/litellm-rust"
+repository = "https://github.com/BerriAI/fast-litellm"
 
 [lib]
-name = "litellm_rust"
+name = "fast_litellm"
 crate-type = ["cdylib"]
 
 [dependencies]

@@ -15,16 +15,16 @@ def test_connection_pooling():
     
     try:
         # Import the Rust module
-        import litellm_connection_pool
+        import _rust
         
-        print("✓ Successfully imported litellm_connection_pool")
+        print("✓ Successfully imported _rust")
         
         # Test health check
-        health = litellm_connection_pool.connection_pool_health_check()
+        health = _rust.connection_pool_health_check()
         print(f"✓ Health check returned: {health}")
         
         # Test connection pool creation
-        pool = litellm_connection_pool.SimpleConnectionPool(10)
+        pool = _rust.SimpleConnectionPool(10)
         print(f"✓ Created SimpleConnectionPool with max connections: {pool.max_connections_per_provider}")
         
         # Test getting a connection
@@ -49,7 +49,7 @@ def test_connection_pooling():
         return True
         
     except ImportError as e:
-        print(f"✗ Failed to import litellm_connection_pool: {e}")
+        print(f"✗ Failed to import _rust: {e}")
         return False
     except Exception as e:
         print(f"✗ Error testing connection pooling: {e}")

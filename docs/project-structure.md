@@ -1,11 +1,11 @@
 # Project Structure
 
-This document outlines the clean, organized structure of the LiteLLM Rust acceleration project.
+This document outlines the clean, organized structure of the Fast LiteLLM acceleration project.
 
 ## 📁 Directory Layout
 
 ```
-litellm-rust/
+fast-litellm/
 ├── 📋 Core Configuration
 │   ├── Cargo.toml              # Rust package configuration
 │   ├── Cargo.lock              # Rust dependency lock
@@ -38,7 +38,7 @@ litellm-rust/
 │       └── performance_monitor.rs # Performance monitoring
 │
 ├── 🐍 Python Package
-│   └── litellm_rust/           # Main Python package
+│   └── fast_litellm/           # Main Python package
 │       ├── __init__.py         # Package entry point
 │       ├── __init__.pyi        # Type stubs
 │       ├── py.typed            # PEP 561 marker
@@ -111,15 +111,15 @@ The following outdated files and directories were removed during cleanup:
 - `litellm-token/` - Consolidated into src/
 - `litellm-connection-pool/` - Consolidated into src/
 - `litellm-rate-limiter/` - Consolidated into src/
-- `litellm_rust.egg-info/` - Build artifact
-- `litellm_rust_accelerator/` - Outdated package
-- `config/` - Moved to litellm_rust/
+- `fast_litellm.egg-info/` - Build artifact
+- `fast_litellm_accelerator/` - Outdated package
+- `config/` - Moved to fast_litellm/
 - `venv/` - Temporary environment
 - `test_venv/` - Temporary environment
 - `target/` - Rust build directory
 
 ### ✅ Organized Files
-- `config/feature_flags.json` → `litellm_rust/feature_flags.json`
+- `config/feature_flags.json` → `fast_litellm/feature_flags.json`
 - Rust workspace → Unified `src/` directory
 - Build system → Single maturin configuration
 
@@ -154,4 +154,4 @@ The project is now ready for:
 3. **Building**: Use `maturin build` for package building
 4. **Publishing**: Push tags for automated PyPI releases
 
-This clean structure provides a solid foundation for the LiteLLM Rust acceleration project, following industry best practices for Rust-Python hybrid packages.
+This clean structure provides a solid foundation for the Fast LiteLLM acceleration project, following industry best practices for Rust-Python hybrid packages.

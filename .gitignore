@@ -143,3 +143,7 @@ test_venv/
 .Trashes
 ehthumbs.db
 Thumbs.db
+# Integration testing
+.litellm/
+.test_wrapper.py
+.test_report.json

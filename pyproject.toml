@@ -8,15 +8,15 @@ requires = [
 build-backend = "maturin"
 
 [project]
-name = "litellm-rust"
+name = "fast-litellm"
 description = "High-performance Rust acceleration for LiteLLM"
 readme = "README.md"
 license = {file = "LICENSE"}
 authors = [
-    {name = "LiteLLM Rust Contributors"}
+    {name = "Fast LiteLLM Contributors"}
 ]
 maintainers = [
-    {name = "LiteLLM Rust Contributors"}
+    {name = "Fast LiteLLM Contributors"}
 ]
 dynamic = ["version"]
 keywords = [
@@ -57,11 +57,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/BerriAI/litellm-rust"
-Documentation = "https://github.com/BerriAI/litellm-rust/tree/main/docs"
-Repository = "https://github.com/BerriAI/litellm-rust.git"
-"Bug Tracker" = "https://github.com/BerriAI/litellm-rust/issues"
-Changelog = "https://github.com/BerriAI/litellm-rust/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/neul-labs/fast-litellm"
+Documentation = "https://github.com/neul-labs/fast-litellm/tree/main/docs"
+Repository = "https://github.com/neul-labs/fast-litellm.git"
+"Bug Tracker" = "https://github.com/neul-labs/fast-litellm/issues"
+Changelog = "https://github.com/neul-labs/fast-litellm/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [
@@ -102,8 +102,8 @@ docs = [
 ]
 
 [tool.maturin]
-python-source = "litellm_rust"
-module-name = "litellm_rust._rust"
+python-source = "fast_litellm"
+module-name = "fast_litellm._rust"
 features = ["pyo3/extension-module"]
 
 
@@ -112,11 +112,11 @@ zip-safe = false
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["litellm_rust*"]
+include = ["fast_litellm*"]
 exclude = ["tests*", "examples*", "docs*"]
 
 [tool.setuptools.package-data]
-litellm_rust = ["py.typed", "*.pyi"]
+fast_litellm = ["py.typed", "*.pyi"]
 
 # Tool configurations
 [tool.black]
@@ -142,7 +142,7 @@ extend-exclude = '''
 profile = "black"
 multi_line_output = 3
 line_length = 88
-known_first_party = ["litellm_rust"]
+known_first_party = ["fast_litellm"]
 
 [tool.mypy]
 python_version = "3.8"
@@ -161,7 +161,7 @@ strict_equality = true
 
 [[tool.mypy.overrides]]
 module = [
-    "litellm_rust.rust_extensions.*",
+    "fast_litellm.rust_extensions.*",
 ]
 ignore_errors = true
 
@@ -171,7 +171,7 @@ addopts = [
     "-ra",
     "--strict-markers",
     "--strict-config",
-    "--cov=litellm_rust",
+    "--cov=fast_litellm",
     "--cov-report=term-missing",
     "--cov-report=html",
     "--cov-report=xml",
@@ -189,7 +189,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["litellm_rust"]
+source = ["fast_litellm"]
 omit = [
     "*/tests/*",
     "*/test_*",

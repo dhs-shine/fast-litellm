@@ -4,16 +4,16 @@ Benchmark script to demonstrate performance improvements from Rust acceleration.
 """
 
 import time
-import litellm_rust
+import fast_litellm
 
 def benchmark_token_counting():
     """Benchmark token counting performance."""
-    if not litellm_rust.RUST_ACCELERATION_AVAILABLE:
+    if not fast_litellm.RUST_ACCELERATION_AVAILABLE:
         print("Rust acceleration not available, skipping benchmark")
         return
     
-    from litellm_rust.rust_extensions import litellm_token
-    counter = litellm_token.SimpleTokenCounter(100)
+    from fast_litellm.rust_extensions import _rust
+    counter = _rust.SimpleTokenCounter(100)
     
     # Sample text for benchmarking
     sample_text = "The quick brown fox jumps over the lazy dog. " * 100
@@ -33,12 +33,12 @@ def benchmark_token_counting():
 
 def benchmark_rate_limiting():
     """Benchmark rate limiting performance."""
-    if not litellm_rust.RUST_ACCELERATION_AVAILABLE:
+    if not fast_litellm.RUST_ACCELERATION_AVAILABLE:
         print("Rust acceleration not available, skipping benchmark")
         return
     
-    from litellm_rust.rust_extensions import litellm_rate_limiter
-    limiter = litellm_rate_limiter.SimpleRateLimiter()
+    from fast_litellm.rust_extensions import _rust
+    limiter = _rust.SimpleRateLimiter()
     
     iterations = 10000
     

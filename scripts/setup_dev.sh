@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🔧 Setting up litellm-rust development environment"
+echo "🔧 Setting up fast-litellm development environment"
 echo "=================================================="
 
 # Check if we're in the right directory

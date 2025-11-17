@@ -17,12 +17,12 @@ def benchmark_rust_routing():
     
     try:
         # Import the Rust module
-        import litellm_core
+        import fast_litellm
         
-        print("✓ Successfully imported litellm_core")
+        print("✓ Successfully imported fast_litellm")
         
         # Create router and deployment
-        from litellm_core import RoutingStrategy, RouterConfig, AdvancedRouter, Deployment
+        from fast_litellm import RoutingStrategy, RouterConfig, AdvancedRouter, Deployment
         
         # Create router config
         config = RouterConfig(
