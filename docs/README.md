@@ -4,27 +4,54 @@ Comprehensive documentation for Fast LiteLLM acceleration.
 
 ## Quick Links
 
-- [🏠 Main README](../README.md) - Project overview and quick start
+### Essential Documentation
+- [🚀 Quickstart](quickstart.md) - Get up and running in 5 minutes
+- [⚡ **Acceleration Components**](acceleration.md) - **What's accelerated and performance**
+- [🧪 **Testing Guide**](testing.md) - **How to test Rust acceleration**
+- [🏠 Main README](../README.md) - Project overview
+
+### Reference Documentation
 - [📚 API Reference](api.md) - Complete API documentation
 - [🏗️ Architecture Guide](architecture.md) - Technical implementation details
 - [🎛️ Feature Flags](feature-flags.md) - Configuration and rollout strategies
 - [📊 Performance Monitoring](monitoring.md) - Metrics and optimization
 - [⚙️ Configuration](configuration.md) - Environment and JSON configuration
+- [📁 Project Structure](project-structure.md) - Codebase organization
 - [🤝 Contributing](contributing.md) - Development guidelines
+- [🐍 Virtual Environments](virtual-environments.md) - Python environment setup
+- [🚀 Deployment](deployment.md) - Production deployment guide
 
 ## Documentation Structure
 
-### For Users
-
-- **[API Reference](api.md)**: Complete function and class documentation
-- **[Configuration](configuration.md)**: Environment variables and JSON config
-- **[Feature Flags](feature-flags.md)**: Gradual rollout and deployment strategies
-- **[Performance Monitoring](monitoring.md)**: Metrics, alerts, and optimization
-
 ### For Developers
 
-- **[Architecture Guide](architecture.md)**: Technical implementation details
-- **[Contributing](contributing.md)**: Development setup and guidelines
+**Start Here**:
+- **[Acceleration Components](acceleration.md)** - What's accelerated, how it works, performance
+- **[Testing Guide](testing.md)** - Test Rust acceleration (22 focused tests)
+- **[Architecture Guide](architecture.md)** - System design
+- **[Contributing](contributing.md)** - Development workflow
+
+**Build & Test**:
+```bash
+# Build Rust extensions
+.venv/bin/maturin develop --release
+
+# Run tests
+./scripts/test_rust.sh
+```
+
+### For Users
+
+- **[Quickstart](quickstart.md)**: Get started in 5 minutes
+- **[API Reference](api.md)**: Function documentation
+- **[Configuration](configuration.md)**: Settings and options
+- **[Feature Flags](feature-flags.md)**: Enable/disable components
+
+### For DevOps
+
+- **[Deployment](deployment.md)**: Production deployment
+- **[Monitoring](monitoring.md)**: Metrics and alerting
+- **[Feature Flags](feature-flags.md)**: Gradual rollouts
 
 ## Getting Started
 

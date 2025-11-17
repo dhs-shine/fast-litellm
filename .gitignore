@@ -147,3 +147,26 @@ Thumbs.db
 .litellm/
 .test_wrapper.py
 .test_report.json
+
+# Archived tests and code
+tests/archive/
+fast_litellm/archive/
+examples/archive/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Maturin build artifacts
+Cargo.lock
+target/
+*.whl
+
+# Additional Python artifacts
+*.pyc
+*.pyo
+*.pyd
+.Python

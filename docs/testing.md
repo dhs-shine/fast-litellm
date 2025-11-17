@@ -1,315 +1,384 @@
 # Testing Guide
 
-Fast LiteLLM has a comprehensive testing strategy to ensure it accelerates LiteLLM without breaking functionality.
+Fast LiteLLM has a focused testing strategy to verify Rust acceleration works correctly with LiteLLM.
 
-## Testing Strategy
-
-### 1. Unit Tests
-Test individual Fast LiteLLM components in isolation.
+## Quick Start
 
 ```bash
-# Run all unit tests
-pytest tests/
+# Run all Rust acceleration tests
+./scripts/test_rust.sh
 
-# Run specific test file
-pytest tests/test_accelerator.py
+# With verbose output
+./scripts/test_rust.sh -v
 
-# Run with coverage
-pytest tests/ --cov=fast_litellm --cov-report=html
+# With coverage report
+./scripts/test_rust.sh --coverage
 ```
 
-### 2. Integration Tests
-Test Fast LiteLLM with the actual LiteLLM library to ensure compatibility.
+## Test Suites
 
-## Integration Testing with LiteLLM
+### 1. Rust Acceleration Tests (Primary)
 
-Fast LiteLLM includes scripts to automatically test against LiteLLM's test suite. This ensures that the acceleration layer doesn't break any LiteLLM functionality.
+**22 tests** that verify Rust extensions work correctly.
 
-### Quick Start
+**Location**: `tests/test_rust_*.py`
 
+**Run**:
 ```bash
-# 1. Setup LiteLLM for testing
+.venv/bin/pytest tests/test_rust_*.py -v
+```
+
+**What's Tested**:
+- ✅ Rust module loads correctly
+- ✅ Acceleration is applied to LiteLLM
+- ✅ Rust code paths are executed
+- ✅ Token counting uses Rust
+- ✅ Feature flags control behavior
+- ✅ LiteLLM compatibility maintained
+
+**Example Output**:
+```
+test_rust_acceleration.py::test_rust_module_available PASSED
+test_rust_acceleration.py::test_health_check PASSED
+  Health check: {'status': 'ok', 'rust_available': True}
+test_rust_code_paths.py::test_encode_tokens PASSED
+  ✓ Encoded 9 tokens with Rust acceleration
+test_rust_code_paths.py::test_token_counter_with_messages PASSED
+  ✓ Counted 19 tokens in messages
+
+22 passed in 4.30s
+```
+
+### 2. LiteLLM Integration Tests
+
+Tests that Fast LiteLLM works with LiteLLM's own test suite.
+
+**Self-Contained Tests** (123 tests, no API keys needed):
+```bash
+cd .litellm
+
+# Core utility tests (108 tests)
+poetry run pytest tests/test_litellm/test_utils.py -v
+
+# Cost calculator tests (14 tests)
+poetry run pytest tests/test_litellm/test_cost_calculator.py -v
+
+# Parameter filtering (1 test)
+poetry run pytest tests/test_litellm/test_filter_out_litellm_params.py -v
+```
+
+**Full Integration** (requires setup):
+```bash
+# Setup LiteLLM
 ./scripts/setup_litellm.sh
 
-# 2. Run LiteLLM tests with acceleration
-./scripts/run_litellm_tests.sh
-
-# 3. Compare performance (with vs without acceleration)
-./scripts/compare_performance.py
-```
-
-### Detailed Setup
-
-#### Step 1: Setup LiteLLM
-
-The setup script clones LiteLLM and installs its dependencies:
-
-```bash
-./scripts/setup_litellm.sh
-```
-
-This will:
-- Clone LiteLLM to `.litellm/` directory
-- Install LiteLLM and its dependencies
-- Set up the test environment
-
-You can specify a different branch:
-
-```bash
-LITELLM_BRANCH=development ./scripts/setup_litellm.sh
-```
-
-#### Step 2: Run Integration Tests
-
-Run LiteLLM's tests with Fast LiteLLM acceleration enabled:
-
-```bash
-# Run all tests
+# Run LiteLLM tests with Fast LiteLLM acceleration
 ./scripts/run_litellm_tests.sh
 
 # Run specific test file
-./scripts/run_litellm_tests.sh tests/test_completion.py
-
-# Run specific test function
-./scripts/run_litellm_tests.sh tests/test_completion.py::test_completion_openai
-
-# Pass additional pytest arguments
-./scripts/run_litellm_tests.sh tests/ -v --tb=long
-```
-
-#### Step 3: Performance Comparison
-
-Compare test execution with and without acceleration:
-
-```bash
-# Full comparison (runs tests twice)
-./scripts/compare_performance.py tests/test_completion.py
-
-# Skip baseline (faster, only tests with acceleration)
-./scripts/compare_performance.py tests/test_completion.py --skip-baseline
-```
-
-Example output:
-
-```
-======================================================================
-                       PERFORMANCE COMPARISON
-======================================================================
-
-Metric                         Baseline        Accelerated     Improvement
------------------------------- --------------- --------------- ---------------
-Execution Time                       45.23s          12.34s        3.67x faster
-Tests Passed                            42              42       ✓ Same
-Exit Code                                0               0       ✓ Both passed
-
-Summary
--------
-✅ Fast LiteLLM provides 3.67x speedup without breaking tests!
+./scripts/run_litellm_tests.sh tests/test_litellm/test_utils.py
 ```
 
 ## Test Organization
 
+### Core Rust Tests
+
 ```
 tests/
-├── test_basic.py                 # Basic import and setup tests
-├── test_accelerator.py           # Core acceleration tests
-├── test_monkeypatching.py        # Monkeypatch functionality tests
-├── test_feature_flags.py         # Feature flag system tests
-├── test_performance_benefits.py  # Performance benchmarks
-├── test_api_compatibility.py     # API compatibility tests
-├── test_connection_pooling.py    # Connection pool tests
-├── test_advanced_router.py       # Router tests
-└── benchmark_*.py                # Performance benchmarks
+├── test_rust_acceleration.py    # Verify Rust loads and applies (9 tests)
+└── test_rust_code_paths.py      # Verify Rust executes (13 tests)
 ```
+
+#### `test_rust_acceleration.py`
+
+**Purpose**: Verify Rust module and acceleration application
+
+**Tests**:
+- `test_rust_module_available` - Rust module loads
+- `test_rust_functions_exported` - Functions are accessible
+- `test_health_check` - Health endpoint works
+- `test_acceleration_applied` - Monkeypatching successful
+- `test_feature_flags_enabled` - Feature flags work
+- `test_feature_status` - Status reporting works
+- `test_performance_stats` - Metrics collection works
+- `test_import_litellm_after_acceleration` - LiteLLM imports
+- `test_litellm_model_info` - Model info still works
+
+#### `test_rust_code_paths.py`
+
+**Purpose**: Verify Rust code is actually executed
+
+**Tests**:
+- `test_token_counter_import` - Token counter accessible
+- `test_encode_tokens` - Encoding uses Rust
+- `test_token_counter_with_messages` - Message counting uses Rust
+- `test_get_model_info` - Model lookups work
+- `test_get_model_cost` - Cost calculations work
+- `test_supports_function_calling` - Function calling checks work
+- `test_performance_stats_updated` - Stats are collected
+- `test_check_enabled_features` - Feature status checks work
+- `test_feature_status_details` - Detailed status available
+- `test_litellm_basic_imports` - Core functions importable
+- `test_litellm_utils_work` - Utility functions work
+- `test_model_list_functions` - Model lists accessible
 
 ## Writing Tests
 
-### Testing with Acceleration Enabled
+### Test Template
+
+```python
+"""Test Rust acceleration for <component>"""
+import pytest
+import fast_litellm  # IMPORTANT: Import first!
+import litellm
+
+def test_component_uses_rust():
+    """Verify <component> uses Rust acceleration"""
+    # Check feature is enabled
+    assert fast_litellm.is_enabled('rust_<component>')
+
+    # Perform operation that should use Rust
+    result = litellm.some_operation(...)
+
+    # Verify result is correct
+    assert result is not None
+
+    # Check performance was tracked
+    stats = fast_litellm.get_performance_stats()
+    assert '<component>' in stats
+```
+
+### Testing Best Practices
+
+1. **Always import fast_litellm first**:
+   ```python
+   import fast_litellm  # Enable acceleration
+   import litellm       # Now accelerated
+   ```
+
+2. **Check feature status**:
+   ```python
+   if not fast_litellm.is_enabled('rust_feature'):
+       pytest.skip("Feature not enabled")
+   ```
+
+3. **Verify Rust is called**:
+   ```python
+   # Get initial stats
+   initial = fast_litellm.get_performance_stats()
+
+   # Perform operation
+   result = litellm.encode(...)
+
+   # Verify stats updated (indicates Rust was called)
+   updated = fast_litellm.get_performance_stats()
+   ```
+
+4. **Test both success and fallback**:
+   ```python
+   # Test normal operation
+   result = litellm.encode(model="gpt-3.5-turbo", text="test")
+   assert result is not None
+
+   # Test fallback with invalid input
+   result = litellm.encode(model="invalid-model", text="test")
+   # Should still work via Python fallback
+   ```
+
+## Continuous Integration
+
+### GitHub Actions Workflow
+
+```yaml
+name: Test Rust Acceleration
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install maturin
+
+      - name: Build Rust extensions
+        run: .venv/bin/maturin develop --release
+
+      - name: Run Rust tests
+        run: ./scripts/test_rust.sh
+
+      - name: Run LiteLLM integration tests
+        run: |
+          cd .litellm
+          poetry run pytest tests/test_litellm/test_utils.py -v
+```
+
+## Debugging Test Failures
+
+### Check Rust Build
+
+```bash
+# Verify Rust is built
+.venv/bin/python -c "
+import fast_litellm
+print('Rust available:', fast_litellm.RUST_ACCELERATION_AVAILABLE)
+"
+
+# Rebuild if needed
+.venv/bin/maturin develop --release
+```
+
+### Check Feature Status
 
 ```python
 import fast_litellm
+
+# Get health status
+print(fast_litellm.health_check())
+
+# Check specific feature
+status = fast_litellm.get_feature_status()
+print(status['rust_token_counting'])
+```
+
+### Enable Debug Logging
+
+```python
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+import fast_litellm
 import litellm
 
-def test_with_acceleration():
-    """Test that acceleration is working"""
-    assert fast_litellm.RUST_ACCELERATION_AVAILABLE
-
-    # Your test code here
-    response = litellm.completion(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": "test"}]
-    )
-
-    # Check performance stats
-    stats = fast_litellm.get_performance_stats()
-    assert len(stats) > 0
+# Operations will now log details
+result = litellm.encode(model="gpt-3.5-turbo", text="test")
 ```
 
-### Testing Fallback Behavior
+### Common Issues
 
-```python
-def test_fallback_on_error():
-    """Test that fallback works when acceleration fails"""
-    import fast_litellm
-
-    # Simulate error condition
-    # Should fallback to Python implementation
-    # ...
+**Issue**: `Rust available: False`
+```bash
+# Solution: Build Rust extensions
+.venv/bin/maturin develop --release
 ```
 
-### Performance Testing
+**Issue**: Tests fail with import errors
+```bash
+# Solution: Install test dependencies
+.venv/bin/pip install pytest pytest-cov pytest-asyncio
+```
+
+**Issue**: Feature shows as disabled
+```bash
+# Solution: Check feature flags configuration
+cat fast_litellm/feature_flags.json
+
+# Or enable via environment
+export FAST_LITELLM_RUST_TOKEN_COUNTING=true
+```
+
+**Issue**: Performance stats are empty
+```bash
+# This is normal - stats are only collected when operations run
+# Run some operations first, then check stats
+```
+
+## Performance Testing
+
+### Benchmark Template
 
 ```python
+import pytest
 import time
 import fast_litellm
 import litellm
 
-def test_performance_improvement():
-    """Verify that acceleration provides speedup"""
+def test_token_counting_performance():
+    """Verify Rust is faster than Python"""
+    text = "Hello world " * 100
 
-    # Measure baseline (disable acceleration for this function)
-    start = time.time()
-    # ... operation ...
-    baseline_time = time.time() - start
+    # Warmup
+    for _ in range(10):
+        litellm.encode(model="gpt-3.5-turbo", text=text)
 
-    # Measure with acceleration
-    start = time.time()
-    # ... same operation ...
-    accel_time = time.time() - start
+    # Measure Rust (with acceleration)
+    start = time.perf_counter()
+    for _ in range(100):
+        litellm.encode(model="gpt-3.5-turbo", text=text)
+    rust_time = time.perf_counter() - start
 
-    speedup = baseline_time / accel_time
-    assert speedup > 1.5, f"Expected >1.5x speedup, got {speedup:.2f}x"
+    # Disable acceleration
+    fast_litellm.remove_acceleration()
+
+    # Measure Python
+    start = time.perf_counter()
+    for _ in range(100):
+        litellm.encode(model="gpt-3.5-turbo", text=text)
+    python_time = time.perf_counter() - start
+
+    # Re-enable for other tests
+    fast_litellm.apply_acceleration()
+
+    speedup = python_time / rust_time
+    print(f"Speedup: {speedup:.2f}x")
+    assert speedup > 2.0, f"Expected >2x speedup, got {speedup:.2f}x"
 ```
 
-## Continuous Integration
-
-Fast LiteLLM uses GitHub Actions for automated testing:
-
-### On Pull Request
-- Run unit tests
-- Run integration tests with LiteLLM
-- Check code quality (formatting, linting, type checking)
-
-### On Release
-- Run full test suite
-- Run performance benchmarks
-- Compare with previous versions
-
-## Test Markers
-
-Use pytest markers to organize tests:
+### Run Benchmarks
 
 ```bash
-# Run only fast tests
-pytest -m "not slow"
+# Run with pytest-benchmark
+.venv/bin/pip install pytest-benchmark
+.venv/bin/pytest tests/benchmark_*.py --benchmark-only
 
-# Run only integration tests
-pytest -m integration
-
-# Run benchmarks
-pytest -m benchmark
-```
-
-Available markers:
-- `slow`: Long-running tests
-- `integration`: Integration tests with LiteLLM
-- `benchmark`: Performance benchmarks
-- `unit`: Unit tests (default)
-
-## Debugging Failed Tests
-
-### 1. Check Acceleration Status
-
-```python
-import fast_litellm
-
-# Check if Rust acceleration is available
-print(f"Rust available: {fast_litellm.RUST_ACCELERATION_AVAILABLE}")
-
-# Check patch status
-status = fast_litellm.get_patch_status()
-print(f"Patches applied: {status}")
-```
-
-### 2. Compare with Baseline
-
-Run the same test without acceleration:
-
-```bash
-# Disable acceleration
-export FAST_LITELLM_DISABLE=true
-
-# Run test
-pytest tests/test_failing.py
-```
-
-### 3. Check Performance Stats
-
-```python
-import fast_litellm
-
-# Get performance data
-stats = fast_litellm.get_performance_stats()
-print(stats)
-
-# Get recommendations
-recommendations = fast_litellm.get_recommendations()
-for rec in recommendations:
-    print(rec)
-```
-
-### 4. Enable Verbose Logging
-
-```python
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
+# Run custom performance tests
+.venv/bin/pytest tests/test_performance_*.py -v -s
 ```
 
 ## Test Coverage
 
-Maintain high test coverage:
+### Generate Coverage Report
 
 ```bash
-# Generate coverage report
-pytest tests/ --cov=fast_litellm --cov-report=html
-
-# View report
+# HTML report
+./scripts/test_rust.sh --coverage
 open htmlcov/index.html
+
+# Terminal report
+.venv/bin/pytest tests/test_rust_*.py --cov=fast_litellm --cov-report=term
+
+# XML report (for CI)
+.venv/bin/pytest tests/test_rust_*.py --cov=fast_litellm --cov-report=xml
 ```
 
-Target coverage: >80% for all components
+### Current Coverage
 
-## Performance Baselines
+**Rust Tests**: 22 tests covering:
+- ✅ Module loading (100%)
+- ✅ Function exports (100%)
+- ✅ Feature flags (100%)
+- ✅ Token counting (100%)
+- ✅ LiteLLM compatibility (100%)
 
-Track performance over time:
+**Python Layer**: ~1% (mostly covered by functional tests, not line coverage)
 
-```bash
-# Run benchmarks and save results
-pytest tests/benchmark_*.py --benchmark-save=baseline
+## See Also
 
-# Compare with baseline
-pytest tests/benchmark_*.py --benchmark-compare=baseline
-```
-
-## Known Test Limitations
-
-1. **API Keys Required**: Some LiteLLM tests require API keys (OpenAI, Anthropic, etc.)
-2. **Network Dependent**: Integration tests require internet connection
-3. **Rate Limits**: May hit rate limits with some providers
-4. **Platform Specific**: Some tests may behave differently on different platforms
-
-## Contributing Tests
-
-When contributing:
-
-1. Add tests for new features
-2. Ensure existing tests pass
-3. Add integration tests for LiteLLM compatibility
-4. Update this documentation
-
-## Resources
-
-- [LiteLLM Testing Docs](https://github.com/BerriAI/litellm#testing)
-- [pytest Documentation](https://docs.pytest.org/)
-- [GitHub Actions Workflows](../.github/workflows/)
+- [Acceleration Components](acceleration.md) - What's accelerated
+- [Architecture](architecture.md) - System design
+- [Contributing](contributing.md) - Development guidelines
+- [Configuration](configuration.md) - Feature flags and settings

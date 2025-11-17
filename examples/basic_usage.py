@@ -1,60 +1,106 @@
 #!/usr/bin/env python3
 """
-Example usage of LiteLLM Rust acceleration.
+Basic usage example of Fast LiteLLM.
+
+This example shows how to:
+1. Enable Rust acceleration
+2. Check acceleration status
+3. Use LiteLLM with acceleration
+4. Monitor performance
 """
 
+# IMPORTANT: Import fast_litellm FIRST to enable acceleration
 import fast_litellm
+import litellm
+
 
 def main():
-    print("LiteLLM Rust Acceleration Example")
-    print("=" * 35)
-    
-    # Check if Rust acceleration is available
+    print("Fast LiteLLM - Basic Usage Example")
+    print("=" * 50)
+    print()
+
+    # 1. Check Rust acceleration status
+    print("1. Checking Rust Acceleration Status")
+    print("-" * 50)
+
     if fast_litellm.RUST_ACCELERATION_AVAILABLE:
-        print("✓ Rust acceleration is available")
+        print("✓ Rust acceleration is AVAILABLE")
     else:
-        print("✗ Rust acceleration is not available")
+        print("✗ Rust acceleration is NOT available")
+        print("  Build with: maturin develop --release")
         return
-    
-    # Run health check
-    from fast_litellm.diagnostics import health_check
-    health = health_check()
-    print(f"✓ Overall health: {health['overall_healthy']}")
-    
-    # Show component health
-    for component_name, component_data in health["components"].items():
-        healthy = component_data.get("healthy", False) or component_data.get("core_healthy", False) or component_data.get("token_healthy", False) or component_data.get("connection_pool_healthy", False) or component_data.get("rate_limiter_healthy", False)
-        print(f"  {component_name}: {'✓' if healthy else '✗'}")
-    
-    # Demonstrate usage of Rust components
-    print("\nDemonstrating Rust components:")
-    
-    # Token counting
-    try:
-        from fast_litellm.rust_extensions import _rust
-        counter = _rust.SimpleTokenCounter(100)
-        text = "This is a sample text for token counting."
-        token_count = counter.count_tokens(text, "gpt-3.5-turbo")
-        print(f"✓ Token count for '{text}': {token_count}")
-    except Exception as e:
-        print(f"✗ Token counting failed: {e}")
-    
-    # Rate limiting
-    try:
-        from fast_litellm.rust_extensions import _rust
-        limiter = _rust.SimpleRateLimiter()
-        within_limit = limiter.check_rate_limit("user123", 100, 60)
-        print(f"✓ Rate limit check: {within_limit}")
-    except Exception as e:
-        print(f"✗ Rate limiting failed: {e}")
-    
-    # Core functionality
-    try:
-        from fast_litellm.rust_extensions import fast_litellm
-        core = fast_litellm.LiteLLMCore()
-        print(f"✓ Core available: {core.is_available()}")
-    except Exception as e:
-        print(f"✗ Core functionality failed: {e}")
+
+    # Get health status
+    health = fast_litellm.health_check()
+    print(f"✓ Status: {health.get('status', 'unknown')}")
+    if 'components' in health:
+        print(f"✓ Components: {', '.join(health['components'])}")
+    print()
+
+    # 2. Check which features are enabled
+    print("2. Feature Status")
+    print("-" * 50)
+
+    features = fast_litellm.get_feature_status()
+    for feature_name, feature_status in features.items():
+        enabled = feature_status.get('enabled', False)
+        status_symbol = "✓" if enabled else "○"
+        print(f"{status_symbol} {feature_name}: {'enabled' if enabled else 'disabled'}")
+    print()
+
+    # 3. Use LiteLLM with acceleration (token counting)
+    print("3. Token Counting with Rust Acceleration")
+    print("-" * 50)
+
+    # Example 1: Encode text to tokens
+    text = "Hello, world! This is a test of Fast LiteLLM."
+    tokens = litellm.encode(model="gpt-3.5-turbo", text=text)
+    print(f"✓ Text: '{text}'")
+    print(f"✓ Tokens: {len(tokens)}")
+    print(f"✓ First few tokens: {tokens[:5]}")
+    print()
+
+    # Example 2: Count tokens in messages
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "What is 2+2?"},
+    ]
+    token_count = litellm.token_counter(model="gpt-3.5-turbo", messages=messages)
+    print(f"✓ Messages: {len(messages)} messages")
+    print(f"✓ Total tokens: {token_count}")
+    print()
+
+    # 4. Check model information (uses accelerated lookups)
+    print("4. Model Information Lookups")
+    print("-" * 50)
+
+    model_info = litellm.get_model_info("gpt-3.5-turbo")
+    print(f"✓ Model: gpt-3.5-turbo")
+    print(f"✓ Max tokens: {model_info.get('max_tokens', 'unknown')}")
+    print(f"✓ Max input tokens: {model_info.get('max_input_tokens', 'unknown')}")
+    print()
+
+    # 5. Performance statistics
+    print("5. Performance Statistics")
+    print("-" * 50)
+
+    stats = fast_litellm.get_performance_stats()
+    if stats:
+        print("✓ Performance data collected:")
+        for key, value in list(stats.items())[:5]:
+            print(f"  {key}: {value}")
+    else:
+        print("○ No performance data yet (run more operations)")
+    print()
+
+    print("=" * 50)
+    print("✓ Example completed successfully!")
+    print()
+    print("Next steps:")
+    print("  - Check docs/acceleration.md for details on what's accelerated")
+    print("  - Run tests: ./scripts/test_rust.sh")
+    print("  - See docs/testing.md for testing guide")
+
 
 if __name__ == "__main__":
     main()

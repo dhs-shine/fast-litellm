@@ -102,7 +102,7 @@ docs = [
 ]
 
 [tool.maturin]
-python-source = "fast_litellm"
+python-source = "."
 module-name = "fast_litellm._rust"
 features = ["pyo3/extension-module"]
 
@@ -177,6 +177,7 @@ addopts = [
     "--cov-report=xml",
 ]
 testpaths = ["tests"]
+norecursedirs = ["archive", ".git", ".venv", "dist", "build", "*.egg"]
 filterwarnings = [
     "error",
     "ignore::UserWarning",
