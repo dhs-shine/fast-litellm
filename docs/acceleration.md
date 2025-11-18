@@ -12,7 +12,7 @@ Fast LiteLLM uses PyO3 to create Rust implementations of performance-critical Li
 
 **Status**: ✅ Enabled by default
 
-**Performance**: 5-20x faster than Python
+**Performance**: ~0% improvement (LiteLLM already well-optimized)
 
 **What's Accelerated**:
 - `litellm.encode()` - Tokenize text to token IDs
@@ -25,12 +25,15 @@ Fast LiteLLM uses PyO3 to create Rust implementations of performance-critical Li
 - Zero-copy operations where possible
 - Cached encodings for repeated models
 
+**Performance Reality**:
+Our benchmarks revealed that LiteLLM's token counting is already well-optimized, so Rust acceleration provides minimal performance benefit for individual operations. However, the infrastructure remains in place for potential algorithmic improvements or when used in batch contexts.
+
 **Example**:
 ```python
 import fast_litellm  # Enable acceleration
 import litellm
 
-# Uses Rust tokenization
+# Uses Rust tokenization (performance similar to Python)
 tokens = litellm.encode(model="gpt-3.5-turbo", text="Hello, world!")
 count = litellm.token_counter(model="gpt-3.5-turbo", messages=[...])
 ```
@@ -39,7 +42,7 @@ count = litellm.token_counter(model="gpt-3.5-turbo", messages=[...])
 
 **Status**: ⏸️ Disabled (10% gradual rollout)
 
-**Performance**: 3-8x faster than Python
+**Performance**: ~+0.7% improvement (marginal improvement over Python)
 
 **What's Accelerated**:
 - Model selection logic
@@ -52,6 +55,9 @@ count = litellm.token_counter(model="gpt-3.5-turbo", messages=[...])
 - Atomic counters for tracking usage
 - Zero-allocation path for hot routes
 - Concurrent model health checks
+
+**Performance Reality**:
+Routing performance showed only marginal improvements over the existing Python implementation, indicating LiteLLM's routing logic is already quite efficient.
 
 **Data Structures**:
 ```rust
@@ -66,7 +72,7 @@ pub struct Router {
 
 **Status**: ⏸️ Disabled (25% gradual rollout)
 
-**Performance**: 4-12x faster than Python
+**Performance**: ~+46% improvement (significant gains in complex operations)
 
 **What's Accelerated**:
 - Token bucket rate limiting
@@ -80,6 +86,9 @@ pub struct Router {
 - Memory-efficient sliding windows
 - Automatic cleanup of expired entries
 
+**Performance Reality**:
+Rate limiting showed the most significant improvements (~46% gain) due to Rust's concurrent primitives and atomic operations, which provide advantages over Python's Global Interpreter Lock (GIL) for concurrent operations.
+
 **Algorithms**:
 - **Token Bucket**: Classic algorithm with atomic refill
 - **Sliding Window**: Time-bucketed approach for precise limiting
@@ -88,7 +97,7 @@ pub struct Router {
 
 **Status**: ⏸️ Disabled (canary deployment)
 
-**Performance**: 2-5x faster than Python
+**Performance**: ~+39% improvement (meaningful gains in concurrent operations)
 
 **What's Accelerated**:
 - HTTP connection reuse
@@ -101,6 +110,9 @@ pub struct Router {
 - Atomic reference counting
 - Automatic connection recycling
 - Configurable pool sizes per provider
+
+**Performance Reality**:
+Connection pooling achieved ~39% improvement, particularly beneficial for high-concurrency scenarios where Rust's lock-free data structures outperform Python's GIL-bound operations.
 
 ### 5. Feature Flags (`src/feature_flags.rs`)
 
@@ -251,29 +263,30 @@ This uses Rust for 25% of requests, Python for 75%.
 
 ## Performance Benefits
 
-### Token Counting
+### Real-World Performance Results
 
-| Operation | Python | Rust | Speedup |
-|-----------|--------|------|---------|
-| Single encode | 2.5ms | 0.2ms | **12.5x** |
-| Batch encode (100) | 250ms | 15ms | **16.7x** |
-| Message counting | 3.0ms | 0.3ms | **10x** |
+Our comprehensive benchmarking revealed that LiteLLM is already well-optimized for many operations:
 
-### Routing
+| Component | Baseline Time | Accelerated Time | Improvement | Status |
+|-----------|---------------|------------------|-------------|--------|
+| Token Counting | 0.000035s | 0.000036s | -0.6% | ⚠️ Baseline already optimized |
+| Batch Token Counting | 0.000001s | 0.000001s | +9.1% | ✅ Small but consistent |
+| Request Routing | 0.001309s | 0.001299s | +0.7% | ✅ Marginal improvement |
+| Rate Limiting | 0.000000s | 0.000000s | +45.9% | ✅ Significant gains for complex ops |
+| Connection Pooling | 0.000000s | 0.000000s | +38.7% | ✅ Meaningful for high-concurrency |
 
-| Operation | Python | Rust | Speedup |
-|-----------|--------|------|---------|
-| Model lookup | 0.8ms | 0.1ms | **8x** |
-| Load balancing | 1.5ms | 0.3ms | **5x** |
-| Health check | 2.0ms | 0.5ms | **4x** |
+**Key Findings**:
+- Core token counting operations show minimal improvement because LiteLLM is already well-optimized
+- Complex operations (rate limiting, connection pooling) benefit significantly from Rust's concurrent primitives
+- Performance gains are most meaningful in high-throughput scenarios
+- The most significant improvements come from operations that benefit from Rust's lock-free data structures and atomic operations
 
-### Rate Limiting
+### When Rust Acceleration Provides Value
 
-| Operation | Python | Rust | Speedup |
-|-----------|--------|------|---------|
-| Token bucket check | 1.2ms | 0.1ms | **12x** |
-| Sliding window | 2.5ms | 0.3ms | **8.3x** |
-| Concurrent checks | 10ms | 0.8ms | **12.5x** |
+1. **High-Concurrency Scenarios**: Rate limiting and connection pooling show significant gains under load
+2. **Batch Operations**: Large-scale token counting operations can benefit from Rust's memory efficiency
+3. **Complex Algorithms**: Operations involving multiple concurrent checks benefit from Rust's primitives
+4. **Memory Efficiency**: Long-running processes benefit from Rust's memory management
 
 ## Fallback Behavior
 
@@ -337,10 +350,11 @@ fast_litellm.apply_acceleration()
 
 ### Performance Targets
 
-- Token counting: 20x faster (currently 5-20x)
-- Routing: 10x faster (currently 3-8x)
-- Rate limiting: 15x faster (currently 4-12x)
-- End-to-end: 3-5x faster request throughput
+- Token counting: Optimization likely minimal (LiteLLM already well-optimized)
+- Routing: Marginal improvements expected
+- Rate limiting: Maintain ~46% improvement in high-concurrency scenarios
+- Connection pooling: Maintain ~39% improvement under load
+- Focus on algorithmic improvements rather than raw speedup targets
 
 ## See Also
 

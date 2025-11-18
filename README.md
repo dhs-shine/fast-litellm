@@ -8,14 +8,15 @@ High-performance Rust acceleration for [LiteLLM](https://github.com/BerriAI/lite
 
 ## Why Fast LiteLLM?
 
-Fast LiteLLM is a drop-in Rust acceleration layer for LiteLLM that provides significant performance improvements:
+Fast LiteLLM is a drop-in Rust acceleration layer for LiteLLM that provides targeted performance improvements where it matters most:
 
-- **5-20x faster** token counting with batch processing
-- **3-8x faster** request routing with lock-free data structures
-- **4-12x faster** rate limiting with async support
-- **2-5x faster** connection management
+- **Modest improvements** in already well-optimized operations like token counting
+- **~46% faster** rate limiting with async and concurrent primitives
+- **~39% faster** connection management with improved pooling
+- **Enhanced batch processing** capabilities
+- **Lock-free data structures** for concurrent operations
 
-Built with PyO3 and Rust, it seamlessly integrates with existing LiteLLM code with zero configuration required.
+Built with PyO3 and Rust, it seamlessly integrates with existing LiteLLM code with zero configuration required. Performance gains are most significant in complex operations where Rust's concurrency model provides advantages over Python's.
 
 ## Installation
 
@@ -73,10 +74,13 @@ The acceleration uses PyO3 to create Python extensions from Rust code:
 
 | Component | Baseline | Optimized | Use Case |
 |-----------|----------|-----------|----------|
-| Token Counting | 5-10x | **15-20x** | Batch processing, context management |
-| Request Routing | 3-5x | **6-8x** | Load balancing, model selection |
-| Rate Limiting | 4-8x | **10-12x** | Request throttling, quota management |
-| Connection Pooling | 2-3x | **4-5x** | HTTP reuse, latency reduction |
+| Token Counting | Well-optimized | **~0x** | Individual token counting (LiteLLM already optimized) |
+| Batch Token Counting | Python implementation | **+9%** | Processing multiple texts at once |
+| Request Routing | Python implementation | **+0.7%** | Load balancing, model selection |
+| Rate Limiting | Python implementation | **+46%** | Request throttling, quota management |
+| Connection Pooling | Python implementation | **+39%** | HTTP reuse, latency reduction |
+
+**Note:** Our benchmarking revealed that LiteLLM's core token counting is already well-optimized, so performance gains are most significant in complex operations like rate limiting and connection pooling, where Rust's concurrent primitives provide meaningful improvements.
 
 ## Configuration
 
@@ -149,6 +153,7 @@ For more information, see our [Contributing Guide](https://github.com/neul-labs/
 
 ## Documentation
 
+- [Performance Analysis](https://github.com/neul-labs/fast-litellm/blob/main/docs/performance-analysis.md) - Realistic benchmarks and expectations
 - [API Reference](https://github.com/neul-labs/fast-litellm/blob/main/docs/api.md)
 - [Architecture Guide](https://github.com/neul-labs/fast-litellm/blob/main/docs/architecture.md)
 - [Feature Flags](https://github.com/neul-labs/fast-litellm/blob/main/docs/feature-flags.md)
@@ -177,6 +182,8 @@ Fast LiteLLM uses PyO3 to create Python extensions from Rust code:
 ```
 
 When you import `fast_litellm`, it automatically patches LiteLLM's performance-critical functions with Rust implementations while maintaining full compatibility with the Python API.
+
+**Note**: Performance gains vary significantly by operation. Core token counting shows minimal improvement as LiteLLM is already well-optimized for these operations. The most significant gains (40-50%) come from complex concurrent operations like rate limiting and connection pooling. See [Performance Analysis](docs/performance-analysis.md) for detailed benchmarks and realistic expectations.
 
 ## Contributing
 
