@@ -1,5 +1,6 @@
 # Fast LiteLLM
 
+[![CI](https://github.com/neul-labs/fast-litellm/actions/workflows/ci.yml/badge.svg)](https://github.com/neul-labs/fast-litellm/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/fast-litellm.svg)](https://pypi.org/project/fast-litellm/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Versions](https://img.shields.io/pypi/pyversions/fast-litellm.svg)](https://pypi.org/project/fast-litellm/)
@@ -21,6 +22,10 @@ Built with PyO3 and Rust, it seamlessly integrates with existing LiteLLM code wi
 ## Installation
 
 ```bash
+# Using uv (recommended)
+uv pip install fast-litellm
+
+# Or using pip
 pip install fast-litellm
 ```
 
@@ -97,7 +102,7 @@ export FAST_LITELLM_BATCH_TOKEN_COUNTING=canary:10
 export FAST_LITELLM_FEATURE_CONFIG=/path/to/config.json
 ```
 
-See the [Configuration Guide](https://github.com/neul-labs/fast-litellm/blob/main/docs/configuration.md) for all options.
+See the configuration section in [CLAUDE.md](CLAUDE.md) for more options.
 
 ## Requirements
 
@@ -113,6 +118,7 @@ To contribute or build from source:
 **Prerequisites:**
 - Python 3.8+
 - Rust toolchain (1.70+)
+- [uv](https://docs.astral.sh/uv/) for package management (recommended)
 - [maturin](https://www.maturin.rs/) for building Python extensions
 
 **Setup:**
@@ -121,15 +127,22 @@ To contribute or build from source:
 git clone https://github.com/neul-labs/fast-litellm.git
 cd fast-litellm
 
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Create virtual environment
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
 # Install maturin
-pip install maturin
+uv pip install maturin
 
 # Build and install in development mode
-maturin develop
+uv run maturin develop
 
 # Run unit tests
-pip install pytest pytest-asyncio
-pytest tests/
+uv pip install pytest pytest-asyncio
+uv run pytest tests/
 ```
 
 ### Integration Testing
@@ -147,47 +160,16 @@ Fast LiteLLM includes comprehensive integration tests that run LiteLLM's test su
 ./scripts/compare_performance.py
 ```
 
-This ensures Fast LiteLLM doesn't break any LiteLLM functionality. See the [Testing Guide](https://github.com/neul-labs/fast-litellm/blob/main/docs/testing.md) for details.
-
-For more information, see our [Contributing Guide](https://github.com/neul-labs/fast-litellm/blob/main/docs/contributing.md).
+This ensures Fast LiteLLM doesn't break any LiteLLM functionality.
 
 ## Documentation
 
-- [Performance Analysis](https://github.com/neul-labs/fast-litellm/blob/main/docs/performance-analysis.md) - Realistic benchmarks and expectations
-- [API Reference](https://github.com/neul-labs/fast-litellm/blob/main/docs/api.md)
-- [Architecture Guide](https://github.com/neul-labs/fast-litellm/blob/main/docs/architecture.md)
-- [Feature Flags](https://github.com/neul-labs/fast-litellm/blob/main/docs/feature-flags.md)
-- [Performance Monitoring](https://github.com/neul-labs/fast-litellm/blob/main/docs/monitoring.md)
-
-## How It Works
-
-Fast LiteLLM uses PyO3 to create Python extensions from Rust code:
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│ LiteLLM Python Package                                      │
-├─────────────────────────────────────────────────────────────┤
-│ fast_litellm (Python Integration Layer)                    │
-│ ├── Enhanced Monkeypatching                                │
-│ ├── Feature Flags & Gradual Rollout                        │
-│ ├── Performance Monitoring                                 │
-│ └── Automatic Fallback                                     │
-├─────────────────────────────────────────────────────────────┤
-│ Rust Acceleration Components (PyO3)                        │
-│ ├── core               (Advanced Routing)                   │
-│ ├── tokens             (Token Counting)                    │
-│ ├── connection_pool    (Connection Management)             │
-│ └── rate_limiter       (Rate Limiting)                     │
-└─────────────────────────────────────────────────────────────┘
-```
-
-When you import `fast_litellm`, it automatically patches LiteLLM's performance-critical functions with Rust implementations while maintaining full compatibility with the Python API.
-
-**Note**: Performance gains vary significantly by operation. Core token counting shows minimal improvement as LiteLLM is already well-optimized for these operations. The most significant gains (40-50%) come from complex concurrent operations like rate limiting and connection pooling. See [Performance Analysis](docs/performance-analysis.md) for detailed benchmarks and realistic expectations.
+- [API Reference](docs/api.md) - Complete API documentation
+- [Contributing Guide](docs/contributing.md) - Development setup and guidelines
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](https://github.com/neul-labs/fast-litellm/blob/main/docs/contributing.md).
+We welcome contributions! Please see our [Contributing Guide](docs/contributing.md).
 
 ## License
 

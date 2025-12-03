@@ -1,10 +1,5 @@
 [build-system]
-requires = [
-    "setuptools>=45",
-    "wheel",
-    "setuptools-rust>=1.5.1",
-    "maturin>=1.0,<2.0",
-]
+requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
 [project]
@@ -85,8 +80,6 @@ dev = [
     "myst-parser>=0.18.0",
 
     # Build and packaging
-    "build>=0.10.0",
-    "twine>=4.0.0",
     "maturin>=1.0,<2.0",
 ]
 test = [
@@ -105,18 +98,6 @@ docs = [
 python-source = "."
 module-name = "fast_litellm._rust"
 features = ["pyo3/extension-module"]
-
-
-[tool.setuptools]
-zip-safe = false
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["fast_litellm*"]
-exclude = ["tests*", "examples*", "docs*"]
-
-[tool.setuptools.package-data]
-fast_litellm = ["py.typed", "*.pyi"]
 
 # Tool configurations
 [tool.black]

@@ -10,17 +10,27 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        exclude:
+          # Reduce matrix for faster CI - skip older Python on non-Linux
+          - os: windows-latest
+            python-version: "3.9"
+          - os: macos-latest
+            python-version: "3.9"
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        version: "latest"
+
+    - name: Set up Python ${{ matrix.python-version }}
+      run: uv python install ${{ matrix.python-version }}
 
     - name: Set up Rust
       uses: dtolnay/rust-toolchain@stable
@@ -30,20 +40,19 @@ jobs:
     - name: Cache Rust dependencies
       uses: Swatinem/rust-cache@v2
 
-    - name: Install maturin
-      run: pip install maturin[patchelf]
+    - name: Create virtual environment
+      run: uv venv --python ${{ matrix.python-version }}
 
-    - name: Install Python dependencies
+    - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install pytest pytest-cov pytest-asyncio
+        uv pip install maturin[patchelf] pytest pytest-cov pytest-asyncio
 
     - name: Build package
-      run: maturin develop
+      run: uv run maturin develop
 
     - name: Run tests
       run: |
-        python -m pytest tests/ -v --cov=fast_litellm --cov-report=xml
+        uv run pytest tests/ -v --cov=fast_litellm --cov-report=xml
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
@@ -57,10 +66,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
       with:
-        python-version: "3.11"
+        version: "latest"
+
+    - name: Set up Python
+      run: uv python install 3.11
 
     - name: Set up Rust
       uses: dtolnay/rust-toolchain@stable
@@ -68,22 +80,24 @@ jobs:
         toolchain: stable
         components: rustfmt, clippy
 
+    - name: Create virtual environment
+      run: uv venv --python 3.11
+
     - name: Install Python linting tools
       run: |
-        python -m pip install --upgrade pip
-        pip install black isort flake8 mypy
+        uv pip install black isort flake8 mypy
 
     - name: Check Python formatting
-      run: black --check .
+      run: uv run black --check .
 
     - name: Check Python imports
-      run: isort --check-only .
+      run: uv run isort --check-only .
 
     - name: Lint Python
-      run: flake8 .
+      run: uv run flake8 .
 
     - name: Type check Python
-      run: mypy fast_litellm/
+      run: uv run mypy fast_litellm/
 
     - name: Format Rust code
       run: cargo fmt --all -- --check
@@ -105,13 +119,19 @@ jobs:
     - name: Run security audit
       run: cargo audit
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
       with:
-        python-version: "3.11"
+        version: "latest"
 
-    - name: Install safety
-      run: pip install safety
+    - name: Set up Python
+      run: uv python install 3.11
+
+    - name: Create virtual environment
+      run: uv venv --python 3.11
+
+    - name: Install pip-audit
+      run: uv pip install pip-audit
 
     - name: Run Python security check
-      run: safety check
+      run: uv run pip-audit

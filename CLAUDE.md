@@ -10,11 +10,18 @@ Fast LiteLLM is a high-performance Rust acceleration layer for LiteLLM that prov
 
 ### Initial Setup
 ```bash
-# Install maturin (Rust-Python build tool)
-pip install maturin
+# Install uv (fast Python package manager)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Create virtual environment and install dependencies
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install maturin and development dependencies
+uv pip install maturin
 
 # Development build (creates editable install)
-maturin develop
+uv run maturin develop
 
 # Or use the automated setup script
 ./scripts/setup_dev.sh
@@ -23,37 +30,37 @@ maturin develop
 ### Building
 ```bash
 # Development build (fast, with debug symbols)
-maturin develop
+uv run maturin develop
 
 # Release build (optimized)
-maturin build --release
+uv run maturin build --release
 
 # Build wheel for distribution
-maturin build --release --out dist
+uv run maturin build --release --out dist
 
 # Build for specific Python version
-maturin build --interpreter python3.11
+uv run maturin build --interpreter python3.11
 ```
 
 ### Testing
 ```bash
 # Run all tests
-pytest tests/
+uv run pytest tests/
 
 # Run specific test file
-pytest tests/test_accelerator.py
+uv run pytest tests/test_accelerator.py
 
 # Run single test
-pytest tests/test_basic.py::test_import_package
+uv run pytest tests/test_basic.py::test_import_package
 
 # Run tests with coverage
-pytest tests/ --cov=fast_litellm --cov-report=html
+uv run pytest tests/ --cov=fast_litellm --cov-report=html
 
 # Run tests excluding slow benchmarks
-pytest tests/ -m "not slow"
+uv run pytest tests/ -m "not slow"
 
 # Run only integration tests
-pytest tests/ -m integration
+uv run pytest tests/ -m integration
 
 # Run Rust tests
 cargo test
@@ -65,15 +72,15 @@ cargo test --lib core
 ### Code Quality
 ```bash
 # Python formatting
-black fast_litellm/ tests/
+uv run black fast_litellm/ tests/
 
 # Python import sorting
-isort fast_litellm/ tests/
+uv run isort fast_litellm/ tests/
 
 # Python linting
-flake8 fast_litellm/
-mypy fast_litellm/
-ruff check fast_litellm/
+uv run flake8 fast_litellm/
+uv run mypy fast_litellm/
+uv run ruff check fast_litellm/
 
 # Rust formatting
 cargo fmt
@@ -82,7 +89,7 @@ cargo fmt
 cargo clippy -- -D warnings
 
 # Run all quality checks
-black --check . && isort --check-only . && flake8 . && mypy fast_litellm/ && cargo fmt -- --check && cargo clippy
+uv run black --check . && uv run isort --check-only . && uv run flake8 . && uv run mypy fast_litellm/ && cargo fmt -- --check && cargo clippy
 ```
 
 ## Architecture
@@ -148,16 +155,16 @@ The system uses enhanced monkeypatching to replace LiteLLM components:
 1. Add Rust implementation in appropriate `src/*.rs` file
 2. Export function in `src/lib.rs` with `#[pyfunction]` decorator
 3. Add to module in `lib.rs` `#[pymodule]` function
-4. Rebuild with `maturin develop`
+4. Rebuild with `uv run maturin develop`
 5. Add Python wrapper in `fast_litellm/` if needed
 6. Add tests in `tests/`
 
 ### Testing Cycle
 
 1. Make changes to Rust code
-2. Run `maturin develop` to rebuild
-3. Run `pytest tests/test_specific.py -v` to test
-4. Use `pytest tests/ -k "test_name"` for specific test
+2. Run `uv run maturin develop` to rebuild
+3. Run `uv run pytest tests/test_specific.py -v` to test
+4. Use `uv run pytest tests/ -k "test_name"` for specific test
 
 ### Integration Testing with LiteLLM
 
@@ -183,19 +190,17 @@ This ensures that Fast LiteLLM doesn't break any LiteLLM functionality. The scri
 3. Run LiteLLM's test suite
 4. Report results and performance metrics
 
-See [docs/testing.md](docs/testing.md) for comprehensive testing documentation.
-
 ### Performance Testing
 
 ```bash
 # Run benchmarks
-pytest tests/benchmark_*.py
+uv run pytest tests/benchmark_*.py
 
 # Compare Rust vs Python implementations
-python examples/benchmark.py
+uv run python examples/benchmark.py
 
 # Profile specific operations
-pytest tests/test_performance_comparison.py -v
+uv run pytest tests/test_performance_comparison.py -v
 
 # Full performance comparison with LiteLLM
 ./scripts/compare_performance.py
@@ -231,14 +236,14 @@ pytest tests/test_performance_comparison.py -v
 ### Build Issues
 - If `maturin develop` fails, ensure Rust toolchain is installed: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
 - For "module not found" errors, check that maturin built to the correct Python environment
-- Use `maturin build --interpreter $(which python)` for specific Python version
+- Use `uv run maturin build --interpreter $(which python)` for specific Python version
 
 ### Import Issues
 - The Rust module is named `_rust`, not `rust_extensions`
 - If import fails, check `target/wheels/` for the built wheel
-- Verify with: `python -c "import fast_litellm._rust"`
+- Verify with: `uv run python -c "import fast_litellm._rust"`
 
 ### Performance Testing
 - Benchmarks require the actual LiteLLM library to be installed
 - Some tests are marked as `slow` and skipped by default
-- Use `pytest -m slow` to run comprehensive benchmarks
+- Use `uv run pytest -m slow` to run comprehensive benchmarks

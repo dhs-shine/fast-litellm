@@ -10,24 +10,47 @@ LITELLM_DIR="${PROJECT_ROOT}/.litellm"
 LITELLM_REPO="https://github.com/BerriAI/litellm.git"
 LITELLM_BRANCH="${LITELLM_BRANCH:-main}"
 
+# Detect CI environment
+CI_MODE="${CI:-false}"
+if [[ "$CI_MODE" == "true" ]] || [[ -n "$GITHUB_ACTIONS" ]] || [[ -n "$GITLAB_CI" ]]; then
+    CI_MODE="true"
+fi
+
 echo "========================================="
 echo "Fast LiteLLM - LiteLLM Integration Setup"
 echo "========================================="
 echo ""
 
-# Check if we're in a virtual environment
-check_venv() {
-    if [[ -n "$VIRTUAL_ENV" ]]; then
-        echo "✅ Virtual environment detected: $VIRTUAL_ENV"
+# Check if uv is available
+check_uv() {
+    if command -v uv &> /dev/null; then
+        echo "Found uv: $(uv --version)"
         return 0
     else
         return 1
     fi
 }
 
-# Check for externally-managed-environment marker
-is_externally_managed() {
-    python3 -c "import sys; import os; marker = os.path.join(sys.base_prefix, 'EXTERNALLY-MANAGED'); exit(0 if os.path.exists(marker) else 1)" 2>/dev/null
+# Install uv if not present
+install_uv() {
+    echo "Installing uv..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.cargo/bin:$PATH"
+    if ! command -v uv &> /dev/null; then
+        echo "Error: Failed to install uv. Please install it manually from https://docs.astral.sh/uv/"
+        exit 1
+    fi
+    echo "uv installed successfully"
+}
+
+# Check if we're in a virtual environment
+check_venv() {
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        echo "Virtual environment detected: $VIRTUAL_ENV"
+        return 0
+    else
+        return 1
+    fi
 }
 
 # Setup virtual environment if needed
@@ -35,60 +58,58 @@ setup_venv() {
     local venv_dir="$PROJECT_ROOT/.venv"
 
     if [ -d "$venv_dir" ]; then
-        echo "📦 Virtual environment already exists at: $venv_dir"
+        echo "Virtual environment already exists at: $venv_dir"
+        if [[ "$CI_MODE" == "true" ]]; then
+            source "$venv_dir/bin/activate" 2>/dev/null || true
+            echo "Activated existing virtual environment"
+            return 0
+        fi
         read -p "Do you want to use it? (Y/n): " -n 1 -r
         echo
         if [[ ! $REPLY =~ ^[Nn]$ ]]; then
             source "$venv_dir/bin/activate"
-            echo "✅ Activated existing virtual environment"
+            echo "Activated existing virtual environment"
             return 0
         fi
     fi
 
-    echo "📦 Creating virtual environment at: $venv_dir"
-    python3 -m venv "$venv_dir" || {
-        echo "❌ Failed to create virtual environment"
-        echo ""
-        echo "Please install python3-venv:"
-        echo "  sudo apt install python3-venv  # Ubuntu/Debian"
-        echo "  sudo dnf install python3-virtualenv  # Fedora"
+    echo "Creating virtual environment at: $venv_dir"
+    uv venv "$venv_dir" || {
+        echo "Error: Failed to create virtual environment"
         exit 1
     }
 
     source "$venv_dir/bin/activate"
-    echo "✅ Created and activated virtual environment"
-
-    # Upgrade pip in the venv
-    pip install --upgrade pip
+    echo "Created and activated virtual environment"
 
     # Install essential build tools
-    echo "📦 Installing build tools (maturin, pytest)..."
-    pip install maturin pytest pytest-asyncio
+    echo "Installing build tools (maturin, pytest)..."
+    uv pip install maturin pytest pytest-asyncio
 }
+
+# Check for uv, install if needed
+if ! check_uv; then
+    echo "uv not found"
+    if [[ "$CI_MODE" == "true" ]]; then
+        install_uv
+    else
+        read -p "Install uv? (Y/n): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+            install_uv
+        else
+            echo "Please install uv manually from https://docs.astral.sh/uv/"
+            exit 1
+        fi
+    fi
+fi
 
 # Check virtual environment
 if ! check_venv; then
-    if is_externally_managed; then
-        echo "⚠️  Detected externally-managed Python environment (PEP 668)"
-        echo ""
-        echo "You have two options:"
-        echo "  1. Let this script create a virtual environment (recommended)"
-        echo "  2. Activate your own virtual environment and run this script again"
-        echo ""
-        read -p "Create virtual environment? (Y/n): " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Nn]$ ]]; then
-            setup_venv
-        else
-            echo ""
-            echo "Please activate a virtual environment and run this script again:"
-            echo "  python3 -m venv .venv"
-            echo "  source .venv/bin/activate"
-            echo "  ./scripts/setup_litellm.sh"
-            exit 1
-        fi
+    echo "No virtual environment detected"
+    if [[ "$CI_MODE" == "true" ]]; then
+        setup_venv
     else
-        echo "⚠️  No virtual environment detected"
         echo ""
         read -p "Create virtual environment? (Y/n): " -n 1 -r
         echo
@@ -100,44 +121,52 @@ fi
 
 # Check if LiteLLM directory exists
 if [ -d "$LITELLM_DIR" ]; then
-    echo "📁 LiteLLM directory exists at: $LITELLM_DIR"
-    read -p "Do you want to update it? (y/N): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        echo "🔄 Updating LiteLLM..."
+    echo "LiteLLM directory exists at: $LITELLM_DIR"
+    if [[ "$CI_MODE" == "true" ]]; then
+        echo "Updating LiteLLM..."
         cd "$LITELLM_DIR"
         git fetch origin
         git checkout "$LITELLM_BRANCH"
-        git pull origin "$LITELLM_BRANCH"
+        git pull origin "$LITELLM_BRANCH" || true
     else
-        echo "✅ Using existing LiteLLM installation"
+        read -p "Do you want to update it? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            echo "Updating LiteLLM..."
+            cd "$LITELLM_DIR"
+            git fetch origin
+            git checkout "$LITELLM_BRANCH"
+            git pull origin "$LITELLM_BRANCH"
+        else
+            echo "Using existing LiteLLM installation"
+        fi
     fi
 else
-    echo "📥 Cloning LiteLLM from $LITELLM_REPO..."
+    echo "Cloning LiteLLM from $LITELLM_REPO..."
     git clone --branch "$LITELLM_BRANCH" --depth 1 "$LITELLM_REPO" "$LITELLM_DIR"
 fi
 
 echo ""
-echo "📦 Installing LiteLLM dependencies..."
+echo "Installing LiteLLM dependencies..."
 cd "$LITELLM_DIR"
 
 # Try to install LiteLLM with proxy support, fall back to minimal
-if pip install -e ".[proxy]" 2>/dev/null; then
-    echo "✅ LiteLLM installed with proxy support"
-elif pip install -e . 2>/dev/null; then
-    echo "✅ LiteLLM installed (minimal)"
+if uv pip install -e ".[proxy]" 2>/dev/null; then
+    echo "LiteLLM installed with proxy support"
+elif uv pip install -e . 2>/dev/null; then
+    echo "LiteLLM installed (minimal)"
 else
-    echo "❌ Failed to install LiteLLM"
+    echo "Error: Failed to install LiteLLM"
     echo ""
     echo "This might be due to missing system dependencies."
     echo "Try installing them manually:"
     echo "  cd $LITELLM_DIR"
-    echo "  pip install -e ."
+    echo "  uv pip install -e ."
     exit 1
 fi
 
 echo ""
-echo "✅ LiteLLM setup complete!"
+echo "LiteLLM setup complete!"
 echo ""
 echo "LiteLLM Location: $LITELLM_DIR"
 echo "Branch: $(cd "$LITELLM_DIR" && git branch --show-current)"
@@ -149,8 +178,7 @@ fi
 
 echo ""
 echo "Next steps:"
-echo "  1. Build Fast LiteLLM: maturin develop"
+echo "  1. Build Fast LiteLLM: uv run maturin develop"
 echo "  2. Run integration tests: ./scripts/run_litellm_tests.sh"
 echo "  3. Or run specific test: ./scripts/run_litellm_tests.sh tests/test_completion.py"
 echo ""
-echo "💡 Tip: Keep this terminal session open to maintain the virtual environment"

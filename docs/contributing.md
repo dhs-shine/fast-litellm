@@ -1,284 +1,107 @@
 # Contributing to Fast LiteLLM
 
-Thank you for your interest in contributing to Fast LiteLLM! This guide will help you get started with development and contributing to the project.
+Thank you for your interest in contributing!
 
 ## Development Setup
 
 ### Prerequisites
 
-- **Python 3.8+** with pip
-- **Rust toolchain 1.70+** (`rustup` recommended)
-- **Git** for version control
-- **LiteLLM** for integration testing
+- Python 3.8+
+- Rust toolchain 1.70+ (`rustup` recommended)
+- uv for package management
+- Git
 
-### Environment Setup
+### Quick Setup
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/neul-labs/fast-litellm.git
-   cd fast-litellm
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/neul-labs/fast-litellm.git
+cd fast-litellm
 
-2. **Set up Python environment**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   pip install -e .
-   ```
-
-3. **Install development dependencies**:
-   ```bash
-   pip install -e ".[dev]"
-   ```
-
-4. **Install Rust toolchain** (if not already installed):
-   ```bash
-   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-   source ~/.cargo/env
-   ```
-
-5. **Verify setup**:
-   ```bash
-   make test-quick
-   ```
-
-## Project Structure
-
+# Run the setup script (installs uv if needed)
+./scripts/setup_dev.sh
 ```
-fast-litellm/
-├── litellm-core/           # Rust: Advanced routing
-├── litellm-token/          # Rust: Token counting
-├── litellm-connection-pool/# Rust: Connection management
-├── litellm-rate-limiter/   # Rust: Rate limiting
-├── fast_litellm/           # Python: Integration layer
-│   ├── enhanced_monkeypatch.py
-│   ├── feature_flags.py
-│   ├── performance_monitor.py
-│   └── ...
-├── examples/               # Usage examples
-├── docs/                   # Documentation
-├── tests/                  # Test suite
-├── config/                 # Configuration templates
-└── Makefile               # Development commands
+
+### Manual Setup
+
+```bash
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Create virtual environment
+uv venv
+source .venv/bin/activate
+
+# Install dependencies
+uv pip install -e ".[dev]"
+
+# Build Rust extensions
+uv run maturin develop
 ```
 
 ## Development Workflow
 
-### Making Changes
-
-1. **Create a feature branch**:
+1. Create a feature branch:
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
-2. **Make your changes** following the coding standards below
-
-3. **Run tests**:
+2. Make changes and run tests:
    ```bash
-   make test-all
+   uv run pytest tests/ -v
+   cargo test
    ```
 
-4. **Format code**:
+3. Format and lint:
    ```bash
-   make format
+   uv run black .
+   uv run isort .
+   cargo fmt
+   cargo clippy
    ```
 
-5. **Run linters**:
+4. Commit using conventional commits:
    ```bash
-   make lint
-   ```
-
-6. **Commit your changes**:
-   ```bash
-   git add .
-   git commit -m "feat: add your feature description"
+   git commit -m "feat: add your feature"
    ```
 
 ## Coding Standards
 
-### Rust Code
+### Rust
+- Format with `cargo fmt`
+- Lint with `cargo clippy`
+- Document public APIs with `///` comments
 
-- **Format**: Use `cargo fmt` (enforced by CI)
-- **Linting**: Use `cargo clippy` with default lints
-- **Documentation**: Document all public APIs with `///` comments
-- **Error handling**: Use `thiserror` for error types
-- **Async**: Use `tokio` for async operations
-
-**Example**:
-```rust
-/// Count tokens for multiple texts in batch
-#[pyo3(signature = (texts, model))]
-fn count_tokens_batch(&self, _py: Python, texts: Vec<&str>, model: &str) -> PyResult<Vec<usize>> {
-    debug!("Batch counting tokens for {} texts", texts.len());
-    // Implementation...
-}
-```
-
-### Python Code
-
-- **Format**: Use `black` (line length: 88)
-- **Import sorting**: Use `isort`
-- **Type hints**: Required for all public APIs
-- **Documentation**: Use Google-style docstrings
-
-**Example**:
-```python
-def record_performance(
-    component: str,
-    operation: str,
-    duration_ms: float,
-    success: bool = True,
-    **kwargs
-) -> None:
-    """Record a performance metric.
-
-    Args:
-        component: Component name (e.g., 'rust_routing')
-        operation: Operation name (e.g., 'route_request')
-        duration_ms: Duration in milliseconds
-        success: Whether the operation was successful
-        **kwargs: Additional metadata
-    """
-    # Implementation...
-```
-
-### Commit Message Format
-
-Use conventional commits:
-
-- `feat: add new feature`
-- `fix: bug fix`
-- `docs: documentation update`
-- `style: formatting changes`
-- `refactor: code refactoring`
-- `test: add tests`
-- `chore: maintenance tasks`
+### Python
+- Format with `black` (line length: 88)
+- Sort imports with `isort`
+- Add type hints to public APIs
+- Use Google-style docstrings
 
 ## Testing
 
-### Running Tests
-
 ```bash
-# Quick smoke tests
-make test-quick
+# Run all tests
+uv run pytest tests/ -v
 
-# Full test suite
-make test-all
+# Run Rust tests
+cargo test
 
-# Rust-only tests
-make test-rust
-
-# Python-only tests
-make test-python
-
-# Performance benchmarks
-make benchmark
+# Run with coverage
+uv run pytest tests/ --cov=fast_litellm
 ```
-
-### Writing Tests
-
-#### Rust Tests
-Place tests in `src/` files or `tests/` directory:
-
-```rust
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_token_counting() {
-        let counter = SimpleTokenCounter::new(100);
-        let count = counter.count_tokens("hello world", "gpt-3.5-turbo").unwrap();
-        assert!(count > 0);
-    }
-}
-```
-
-#### Python Tests
-Use pytest in the `tests/` directory:
-
-```python
-import pytest
-import fast_litellm
-
-def test_feature_flag_enabled():
-    """Test feature flag functionality."""
-    assert isinstance(fast_litellm.is_enabled("rust_routing"), bool)
-
-@pytest.mark.asyncio
-async def test_async_wrapper():
-    """Test async wrapper functionality."""
-    # Async test implementation
-```
-
-## Performance Considerations
-
-### Optimization Guidelines
-
-1. **Minimize allocations**: Reuse buffers and data structures
-2. **Avoid blocking**: Use async operations for I/O
-3. **Batch operations**: Process multiple items together when possible
-4. **Cache strategically**: Cache expensive computations
-5. **Profile regularly**: Use `cargo bench` and `pytest-benchmark`
-
-### Benchmarking
-
-```bash
-# Rust benchmarks
-cd litellm-token
-cargo bench
-
-# Python benchmarks
-pytest tests/benchmarks/ -v
-```
-
-## Documentation
-
-### API Documentation
-
-- **Rust**: Use `cargo doc` to generate documentation
-- **Python**: Use Sphinx with Google-style docstrings
-
-### Documentation Updates
-
-When adding new features:
-
-1. Update relevant `.md` files in `docs/`
-2. Add examples to `examples/`
-3. Update API reference in `docs/api.md`
-4. Update configuration docs if applicable
-
-## Debugging
-
-### Debug Builds
-
-```bash
-# Debug Rust components
-export RUST_LOG=debug
-python -c "import fast_litellm; print('Debug enabled')"
-
-# Enable performance monitoring
-export FAST_LITELLM_PERFORMANCE_MONITORING=true
-```
-
-### Common Issues
-
-1. **PyO3 binding errors**: Check Python/Rust type compatibility
-2. **Performance regressions**: Run benchmarks before/after changes
-3. **Memory leaks**: Use `valgrind` or similar tools
-4. **Thread safety**: Review concurrent access patterns
 
 ## Pull Request Process
 
-### Before Submitting
+1. Run full test suite
+2. Ensure code is formatted
+3. Update documentation if needed
+4. Add tests for new functionality
 
-1. **Run full test suite**: `make test-all`
-2. **Check formatting**: `make format`
-3. **Run linters**: `make lint`
-4. **Update documentation**: If adding new features
-5. **Add tests**: For new functionality
-
-### PR Description Template
+### PR Template
 
 ```markdown
 ## Summary
@@ -288,100 +111,20 @@ Brief description of changes
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
-- [ ] Documentation update
 
 ## Testing
-- [ ] Unit tests pass
-- [ ] Integration tests pass
-- [ ] Benchmarks show no regression
-
-## Documentation
-- [ ] Updated API docs
-- [ ] Updated examples
-- [ ] Updated configuration docs
-
-## Additional Notes
-Any additional information or context
+- [ ] Tests pass
+- [ ] Added tests for new code
 ```
-
-### Review Process
-
-1. **Automated checks**: CI runs tests and linting
-2. **Code review**: Maintainer reviews code quality
-3. **Performance review**: Check for performance regressions
-4. **Documentation review**: Ensure docs are updated
 
 ## Release Process
 
-### Version Numbering
-
-We follow [Semantic Versioning](https://semver.org/):
-
-- **MAJOR**: Breaking changes
-- **MINOR**: New features (backward compatible)
-- **PATCH**: Bug fixes (backward compatible)
-
-### Release Checklist
-
 1. Update version in `Cargo.toml` and `pyproject.toml`
 2. Update `CHANGELOG.md`
-3. Run full test suite
-4. Create release PR
-5. Tag release after merge
-6. Publish to PyPI and crates.io
+3. Create and push a version tag: `git tag v0.x.x && git push origin v0.x.x`
+4. CI automatically publishes to PyPI
 
-## Community Guidelines
+## Getting Help
 
-### Code of Conduct
-
-- Be respectful and inclusive
-- Focus on constructive feedback
-- Help others learn and improve
-- Follow project conventions
-
-### Getting Help
-
-- **GitHub Issues**: Bug reports and feature requests
-- **GitHub Discussions**: Questions and community support
-- **Documentation**: Check docs first
-- **Examples**: Look at example code
-
-### Becoming a Maintainer
-
-Regular contributors who demonstrate:
-
-- Code quality and testing discipline
-- Good communication and collaboration
-- Understanding of project goals
-- Commitment to helping others
-
-May be invited to become maintainers.
-
-## Advanced Topics
-
-### Adding New Rust Components
-
-1. Create new crate in workspace
-2. Add to `Cargo.toml` workspace members
-3. Implement PyO3 bindings
-4. Add Python integration layer
-5. Update monkeypatching system
-6. Add comprehensive tests
-
-### Performance Optimization
-
-1. Profile with `cargo flamegraph`
-2. Identify bottlenecks
-3. Implement optimizations
-4. Benchmark improvements
-5. Validate with integration tests
-
-### Feature Flag Implementation
-
-1. Add feature to `feature_flags.py`
-2. Update configuration schema
-3. Add environment variable support
-4. Implement gradual rollout logic
-5. Add monitoring and alerts
-
-Thank you for contributing to Fast LiteLLM! Your contributions help make high-performance LLM operations accessible to everyone.
+- GitHub Issues: Bug reports and feature requests
+- GitHub Discussions: Questions and community support
