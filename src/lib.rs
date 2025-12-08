@@ -87,7 +87,7 @@ fn health_check(py: Python) -> PyResult<PyObject> {
     dict.set_item("status", "ok")?;
     dict.set_item("rust_available", true)?;
 
-    let components = PyList::new(py, &["core", "tokens", "connection_pool", "rate_limiter"]);
+    let components = PyList::new(py, &["core", "tokens", "connection_pool", "rate_limiter"])?;
     dict.set_item("components", components)?;
 
     Ok(dict.into())
@@ -95,6 +95,7 @@ fn health_check(py: Python) -> PyResult<PyObject> {
 
 /// Check if a feature is enabled
 #[pyfunction]
+#[pyo3(signature = (feature_name, request_id=None))]
 fn is_enabled(feature_name: String, request_id: Option<String>) -> bool {
     feature_flags::is_feature_enabled(&feature_name, request_id.as_deref())
 }
@@ -108,12 +109,14 @@ fn get_feature_status(py: Python) -> PyResult<PyObject> {
 
 /// Reset errors for features
 #[pyfunction]
+#[pyo3(signature = (feature_name=None))]
 fn reset_errors(feature_name: Option<String>) {
     feature_flags::reset_feature_errors(feature_name.as_deref());
 }
 
 /// Record performance metrics
 #[pyfunction]
+#[pyo3(signature = (component, operation, duration_ms, success=None, input_size=None, output_size=None))]
 fn record_performance(
     component: String,
     operation: String,
@@ -135,6 +138,7 @@ fn record_performance(
 
 /// Get performance statistics
 #[pyfunction]
+#[pyo3(signature = (component=None))]
 fn get_performance_stats(py: Python, component: Option<String>) -> PyResult<PyObject> {
     let stats = performance_monitor::get_performance_stats(component.as_deref());
     convert_hashmap_to_pydict(py, stats)
@@ -171,6 +175,7 @@ fn get_recommendations(py: Python) -> PyResult<PyObject> {
 
 /// Export performance data
 #[pyfunction]
+#[pyo3(signature = (component=None, format=None))]
 fn export_performance_data(
     component: Option<String>,
     format: Option<String>,
@@ -187,7 +192,7 @@ fn get_patch_status(py: Python) -> PyResult<PyObject> {
     let dict = PyDict::new(py);
     dict.set_item("applied", true)?;
 
-    let components = PyList::new(py, &["routing", "token_counting", "rate_limiting", "connection_pooling"]);
+    let components = PyList::new(py, &["routing", "token_counting", "rate_limiting", "connection_pooling"])?;
     dict.set_item("components", components)?;
 
     Ok(dict.into())
@@ -195,7 +200,7 @@ fn get_patch_status(py: Python) -> PyResult<PyObject> {
 
 /// Python module definition
 #[pymodule]
-fn _rust(_py: Python, m: &PyModule) -> PyResult<()> {
+fn _rust(m: &Bound<'_, PyModule>) -> PyResult<()> {
     // Add version constant
     m.add("__version__", "0.1.0")?;
     m.add("RUST_ACCELERATION_AVAILABLE", true)?;
