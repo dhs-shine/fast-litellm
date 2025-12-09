@@ -70,9 +70,10 @@ jobs:
           uv run python -c "
           import fast_litellm
           import litellm
+          from importlib.metadata import version
 
           print(f'Fast LiteLLM: {fast_litellm.__version__}')
-          print(f'LiteLLM: {litellm.__version__}')
+          print(f'LiteLLM: {version(\"litellm\")}')
           print(f'Rust acceleration: {fast_litellm.RUST_ACCELERATION_AVAILABLE}')
 
           # Basic health check
