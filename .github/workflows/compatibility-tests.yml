@@ -105,5 +105,6 @@ jobs:
       - name: Build and test
         run: |
           uv add --dev maturin pytest pytest-asyncio
+          uv add litellm
           uv run maturin develop --release
           uv run pytest tests/ -v --tb=short -p no:cov

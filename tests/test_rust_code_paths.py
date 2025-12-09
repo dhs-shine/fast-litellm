@@ -12,11 +12,11 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Now import LiteLLM - it should use Rust where enabled
-import litellm
-
 # CRITICAL: Import fast_litellm FIRST to enable Rust acceleration
 import fast_litellm
+
+# Try to import litellm - skip tests if not available
+litellm = pytest.importorskip("litellm", reason="litellm not installed")
 
 
 class TestRustTokenCounting:
