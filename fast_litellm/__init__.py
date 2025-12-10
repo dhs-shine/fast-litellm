@@ -95,7 +95,7 @@ if RUST_ACCELERATION_AVAILABLE:
         rust_module._rust = _rust
 
         enhanced_monkeypatch.enhanced_apply_acceleration(rust_module)
-    except TypeError as e:
+    except TypeError:
         # TypeError typically means Python version incompatibility with litellm
         # (e.g., litellm using `str | List[str]` syntax on Python < 3.10)
         # This is expected and should not raise a warning that breaks tests
