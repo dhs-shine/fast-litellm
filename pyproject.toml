@@ -76,9 +76,10 @@ dev = [
     "ruff>=0.1.0",
 
     # Documentation
-    "sphinx>=5.0.0",
-    "sphinx-rtd-theme>=1.2.0",
-    "myst-parser>=0.18.0",
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocstrings[python]>=0.24.0",
+    "pymdown-extensions>=10.0.0",
 
     # Build and packaging
     "maturin>=1.0,<2.0",
@@ -90,9 +91,10 @@ test = [
     "pytest-cov>=4.0.0",
 ]
 docs = [
-    "sphinx>=5.0.0",
-    "sphinx-rtd-theme>=1.2.0",
-    "myst-parser>=0.18.0",
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocstrings[python]>=0.24.0",
+    "pymdown-extensions>=10.0.0",
 ]
 
 [tool.maturin]
