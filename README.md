@@ -7,7 +7,7 @@
 
 High-performance Rust acceleration for [LiteLLM](https://github.com/BerriAI/litellm) - providing significant performance improvements for connection pooling, rate limiting, and memory-intensive workloads.
 
-Created by [Dipankar Sarkar](mailto:me@dipankar.name) at [Neul Labs](https://www.neul.uk).
+Created by [Dipankar Sarkar](https://www.dipankar.name) at [Neul Labs](https://www.neul.uk).
 
 ## Why Fast LiteLLM?
 
