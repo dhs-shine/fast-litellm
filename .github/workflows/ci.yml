@@ -222,5 +222,4 @@ jobs:
         repository: ${{ github.repository }}
         workflow: publish.yml
         ref: ${{ github.ref }}
-        inputs:
-          version: ${{ steps.cargo_version.outputs.version }}
+        inputs: '{"version": "${{ steps.cargo_version.outputs.version }}"}'
