@@ -227,7 +227,7 @@ jobs:
 
     - name: Trigger publish workflow
       if: steps.cargo_version.outputs.changed == 'true'
-      uses: peter-evans/workflow-dispatch@v1
+      uses: peter-evans/workflow-dispatch@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         repository: ${{ github.repository }}
