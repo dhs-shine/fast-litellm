@@ -63,7 +63,7 @@ fn download_with_curl(pricing_file: &PathBuf) -> bool {
     // -m: max time in seconds (timeout)
     // -o: output file
     let output = Command::new("curl")
-        .args(&[
+        .args([
             "-fsSL",
             "-m",
             &DOWNLOAD_TIMEOUT_SECS.to_string(),
@@ -108,7 +108,7 @@ fn download_with_wget(pricing_file: &PathBuf) -> bool {
     // -T: timeout seconds
     // -t: retry attempts
     let output = Command::new("wget")
-        .args(&[
+        .args([
             "-q",
             "-O",
             pricing_file.to_str().unwrap(),

@@ -202,6 +202,12 @@ impl PricingData {
     }
 }
 
+impl Default for PricingData {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// Get the pricing data file path
 fn get_pricing_file_path() -> Option<PathBuf> {
     // Try to find the pricing file from the build output
