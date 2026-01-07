@@ -27,16 +27,6 @@ Generated: 2026-01-07 12:00:00 UTC
 - **Tested Python versions**: 3.9.25, 3.10.19, 3.11.14, 3.12.12, 3.13.11
 - **Passed**: 5/5
 
-## Python Version Summary
-
-| Python Version | Platforms Passed | Platforms Failed | Status |
-|----------------|------------------|------------------|--------|
-| 3.9.25 | 3 | 0 | ✅ |
-| 3.10.19 | 3 | 0 | ✅ |
-| 3.11.14 | 3 | 0 | ✅ |
-| 3.12.12 | 3 | 0 | ✅ |
-| 3.13.11 | 3 | 0 | ✅ |
-
 ## Tested Versions
 
 - **Fast LiteLLM**: 0.1.0

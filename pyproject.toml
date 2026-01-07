@@ -13,6 +13,7 @@ authors = [
 maintainers = [
     {name = "Neul Labs"}
 ]
+# Version is dynamically read from Cargo.toml by maturin
 dynamic = ["version"]
 keywords = [
     "llm",

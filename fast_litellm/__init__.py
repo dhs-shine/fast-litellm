@@ -21,7 +21,16 @@ Example:
     >>> # All LiteLLM operations now use Rust acceleration
 """
 
-__version__ = "0.1.0"
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("fast-litellm")
+except PackageNotFoundError:
+    # For editable installs during development, read from Rust module
+    try:
+        from ._rust import __version__
+    except ImportError:
+        __version__ = "0.1.7"  # Fallback to Cargo.toml version
 
 # Import key components
 import warnings

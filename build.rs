@@ -267,4 +267,8 @@ fn main() {
     if pricing_file.exists() {
         println!("cargo:rerun-if-changed={}", pricing_file.display());
     }
+
+    // Export version for Python bindings
+    let version = env!("CARGO_PKG_VERSION");
+    println!("cargo:rustc-env=FAST_LITELLM_VERSION={}", version);
 }

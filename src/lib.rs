@@ -579,7 +579,7 @@ fn get_available_deployment(
 #[pymodule]
 fn _rust(m: &Bound<'_, PyModule>) -> PyResult<()> {
     // Add version constant
-    m.add("__version__", "0.1.0")?;
+    m.add("__version__", env!("FAST_LITELLM_VERSION"))?;
     m.add("RUST_ACCELERATION_AVAILABLE", true)?;
 
     // Core functions
