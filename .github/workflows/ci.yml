@@ -168,28 +168,21 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        fetch-tags: true
 
     - name: Detect Cargo version change
       id: cargo_version
-      env:
-        BEFORE: ${{ github.event.before }}
-        AFTER: ${{ github.sha }}
       run: |
         set -euo pipefail
-        before_ref="${BEFORE:-}"
-        after_ref="${AFTER:-}"
-        if [ -z "$after_ref" ]; then
-          after_ref="$(git rev-parse HEAD)"
-        fi
-        if [ -z "$before_ref" ] || [ "$before_ref" = "0000000000000000000000000000000000000000" ]; then
-          if git rev-parse "${after_ref}^" >/dev/null 2>&1; then
-            before_ref="$(git rev-parse "${after_ref}^")"
-          else
-            before_ref=""
-          fi
-        fi
 
-        BEFORE_REF="$before_ref" AFTER_REF="$after_ref" python <<'PY' | tee -a "$GITHUB_OUTPUT"
+        # Get the current commit's Cargo version
+        current_ref="$(git rev-parse HEAD)"
+
+        # Get the latest tag
+        last_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+        last_tag_ref=$(git rev-parse "$last_tag" 2>/dev/null || echo "")
+
+        BEFORE_REF="$last_tag_ref" AFTER_REF="$current_ref" python <<'PY' | tee -a "$GITHUB_OUTPUT"
         import os
         import subprocess
 
@@ -239,7 +232,7 @@ jobs:
 
     - name: Trigger publish workflow
       if: steps.cargo_version.outputs.changed == 'true'
-      uses: peter-evans/workflow-dispatch@v3
+      uses: peter-evans/workflow-dispatch@v4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         repository: ${{ github.repository }}
