@@ -42,7 +42,8 @@ impl PricingStats {
     }
 
     fn record_json_loaded(&self, success: bool) {
-        self.json_loaded_successfully.store(if success { 1 } else { 0 }, Ordering::Relaxed);
+        self.json_loaded_successfully
+            .store(if success { 1 } else { 0 }, Ordering::Relaxed);
     }
 
     fn json_loaded(&self) -> bool {
@@ -114,7 +115,8 @@ impl PricingData {
         let result = self.find_pricing_uncached(model);
 
         // Cache the result
-        self.lookup_cache.insert(model.to_string(), result.is_some());
+        self.lookup_cache
+            .insert(model.to_string(), result.is_some());
 
         // Record failure if not found
         if result.is_none() {
@@ -135,7 +137,12 @@ impl PricingData {
             let without_prefix = &model[slash_pos + 1..];
             if let Some(pricing) = self.models.get(without_prefix) {
                 // Make sure it's not chat+completion mode confusion
-                if pricing.mode.as_ref().map(|m| m.contains("chat")).unwrap_or(true) {
+                if pricing
+                    .mode
+                    .as_ref()
+                    .map(|m| m.contains("chat"))
+                    .unwrap_or(true)
+                {
                     return Some(pricing);
                 }
             }

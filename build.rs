@@ -5,7 +5,6 @@
 /// - Uses curl with timeout and retry logic
 /// - Falls back to wget if curl fails
 /// - Validates the downloaded file
-
 use std::env;
 use std::fs;
 use std::path::PathBuf;
@@ -23,7 +22,10 @@ const RETRY_DELAY_MS: u64 = 1000;
 /// Download file with timeout and retry logic
 fn download_with_retry(pricing_file: &PathBuf) -> bool {
     for attempt in 1..=MAX_RETRIES {
-        println!("⬇️  Downloading model pricing (attempt {}/{})...", attempt, MAX_RETRIES);
+        println!(
+            "⬇️  Downloading model pricing (attempt {}/{})...",
+            attempt, MAX_RETRIES
+        );
 
         // Try curl first (with timeout)
         let curl_success = download_with_curl(pricing_file);
@@ -39,8 +41,12 @@ fn download_with_retry(pricing_file: &PathBuf) -> bool {
         }
 
         if attempt < MAX_RETRIES {
-            println!("   ⚠️  Download failed, retrying in {}ms...", RETRY_DELAY_MS);
-            std::thread::sleep(Duration::from_millis(RETRY_DELAY_MS * attempt as u64)); // Exponential backoff
+            println!(
+                "   ⚠️  Download failed, retrying in {}ms...",
+                RETRY_DELAY_MS
+            );
+            std::thread::sleep(Duration::from_millis(RETRY_DELAY_MS * attempt as u64));
+            // Exponential backoff
         }
     }
 
@@ -59,8 +65,10 @@ fn download_with_curl(pricing_file: &PathBuf) -> bool {
     let output = Command::new("curl")
         .args(&[
             "-fsSL",
-            "-m", &DOWNLOAD_TIMEOUT_SECS.to_string(),
-            "-o", pricing_file.to_str().unwrap(),
+            "-m",
+            &DOWNLOAD_TIMEOUT_SECS.to_string(),
+            "-o",
+            pricing_file.to_str().unwrap(),
             PRICING_URL,
         ])
         .output();
@@ -68,7 +76,10 @@ fn download_with_curl(pricing_file: &PathBuf) -> bool {
     match output {
         Ok(result) => {
             if result.status.success() {
-                println!("   ✅ Downloaded via curl ({} bytes)", file_size(pricing_file));
+                println!(
+                    "   ✅ Downloaded via curl ({} bytes)",
+                    file_size(pricing_file)
+                );
                 true
             } else {
                 let stderr = String::from_utf8_lossy(&result.stderr);
@@ -99,9 +110,12 @@ fn download_with_wget(pricing_file: &PathBuf) -> bool {
     let output = Command::new("wget")
         .args(&[
             "-q",
-            "-O", pricing_file.to_str().unwrap(),
-            "-T", &DOWNLOAD_TIMEOUT_SECS.to_string(),
-            "-t", "1",
+            "-O",
+            pricing_file.to_str().unwrap(),
+            "-T",
+            &DOWNLOAD_TIMEOUT_SECS.to_string(),
+            "-t",
+            "1",
             PRICING_URL,
         ])
         .output();
@@ -109,7 +123,10 @@ fn download_with_wget(pricing_file: &PathBuf) -> bool {
     match output {
         Ok(result) => {
             if result.status.success() {
-                println!("   ✅ Downloaded via wget ({} bytes)", file_size(pricing_file));
+                println!(
+                    "   ✅ Downloaded via wget ({} bytes)",
+                    file_size(pricing_file)
+                );
                 true
             } else {
                 let stderr = String::from_utf8_lossy(&result.stderr);
@@ -159,7 +176,11 @@ fn validate_pricing_file(pricing_file: &PathBuf) -> bool {
                 return false;
             }
             if size > MAX_FILE_SIZE {
-                println!("   ⚠️  Pricing file too large ({} > {} MB)", size, MAX_FILE_SIZE / 1024 / 1024);
+                println!(
+                    "   ⚠️  Pricing file too large ({} > {} MB)",
+                    size,
+                    MAX_FILE_SIZE / 1024 / 1024
+                );
                 return false;
             }
         }
@@ -185,7 +206,10 @@ fn validate_pricing_file(pricing_file: &PathBuf) -> bool {
                 return false;
             }
 
-            println!("   ✅ Valid JSON structure ({} bytes)", file_size(pricing_file));
+            println!(
+                "   ✅ Valid JSON structure ({} bytes)",
+                file_size(pricing_file)
+            );
             true
         }
         Err(e) => {
@@ -256,8 +280,13 @@ fn main() {
                 let _ = fs::write(&pricing_file, "{}");
             }
         } else {
-            println!("⚠️  Could not download model pricing after {} attempts", MAX_RETRIES);
-            println!("   Using embedded defaults. Run 'DOWNLOAD_MODEL_PRICING=1 cargo build' to retry.");
+            println!(
+                "⚠️  Could not download model pricing after {} attempts",
+                MAX_RETRIES
+            );
+            println!(
+                "   Using embedded defaults. Run 'DOWNLOAD_MODEL_PRICING=1 cargo build' to retry."
+            );
             // Create empty file to prevent repeated downloads
             let _ = fs::write(&pricing_file, "{}");
         }

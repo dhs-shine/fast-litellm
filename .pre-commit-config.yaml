@@ -17,5 +17,13 @@ repos:
         types: [python]
         stages: [pre-commit]
 
+      - id: cargo-fmt
+        name: Check Rust formatting
+        entry: cargo fmt --all -- --check
+        language: system
+        pass_filenames: false
+        types: [rust]
+        stages: [pre-commit]
+
   # Note: Run `uv run pip-audit` separately to check for vulnerabilities
   # (pip-audit has issues detecting uv venv in pre-commit hooks)

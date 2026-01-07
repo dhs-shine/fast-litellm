@@ -52,6 +52,7 @@ dependencies = [
     "aiohttp>=3.13.3",
     "httpx>=0.24.0",
     "litellm>=1.80.0",
+    "urllib3>=2.6.3",
 ]
 
 [project.urls]
