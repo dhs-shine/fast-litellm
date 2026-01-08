@@ -197,6 +197,11 @@ This ensures Fast LiteLLM doesn't break any LiteLLM functionality.
 
 - [API Reference](docs/api.md) - Complete API documentation
 - [Contributing Guide](docs/contributing.md) - Development setup and guidelines
+- [Troubleshooting Guide](TROUBLESHOOTING.md) - Common issues and solutions
+
+## Troubleshooting
+
+Having issues? See our [Troubleshooting Guide](TROUBLESHOOTING.md) for common problems and solutions.
 
 ## Contributing
 

@@ -158,11 +158,11 @@ class FeatureFlagManager:
                     elif env_value.startswith("canary:"):
                         state = FeatureState.CANARY
                         percentage = float(env_value.split(":")[1])
-                        percentage = percentage.clamp(0.0, 100.0)  # Validate bounds
+                        percentage = min(max(percentage, 0.0), 100.0)  # Validate bounds
                     elif env_value.startswith("rollout:"):
                         state = FeatureState.GRADUAL_ROLLOUT
                         percentage = float(env_value.split(":")[1])
-                        percentage = percentage.clamp(0.0, 100.0)  # Validate bounds
+                        percentage = min(max(percentage, 0.0), 100.0)  # Validate bounds
                     else:
                         continue
 

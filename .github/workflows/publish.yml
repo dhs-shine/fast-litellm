@@ -120,6 +120,7 @@ jobs:
     name: Test PyPI Release
     needs: [build-linux, build-windows, build-macos, build-sdist]
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     if: github.event_name == 'workflow_dispatch'
     environment: test-release
 
@@ -228,16 +229,17 @@ jobs:
         id: release-info
         uses: actions/github-script@v7
         with:
-          result-type: gist
           script: |
-            const { data: release } = await github.rest.repos.getRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: context.runId
-            });
-            return {
-              assets: release.assets.length,
-              downloadCount: release.download_count
+            const tag = process.env.GITHUB_REF.replace('refs/tags/', '');
+            try {
+              const { data: release } = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: tag
+              });
+              console.log(`Found release with ${release.assets.length} assets`);
+            } catch (error) {
+              console.log(`Could not fetch release info: ${error.message}`);
             }
 
       - name: Notification

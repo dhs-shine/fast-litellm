@@ -132,6 +132,15 @@ jobs:
           uv python install 3.11
           uv venv --python 3.11
 
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies for report generation
+        run: |
+          uv add --dev maturin
+          uv add litellm
+          uv run maturin develop
+
       - name: Generate compatibility report
         run: |
           uv run python << 'EOF'

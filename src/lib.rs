@@ -214,19 +214,14 @@ impl SimpleRateLimiter {
 
 /// Connection pool class for managing API connections
 #[pyclass]
-pub struct SimpleConnectionPool {
-    #[allow(dead_code)]
-    pool_name: String,
-}
+pub struct SimpleConnectionPool;
 
 #[pymethods]
 impl SimpleConnectionPool {
     #[new]
-    #[pyo3(signature = (pool_name="default"))]
-    fn new(pool_name: &str) -> Self {
-        Self {
-            pool_name: pool_name.to_string(),
-        }
+    #[pyo3(signature = (_pool_name="default"))]
+    fn new(_pool_name: &str) -> Self {
+        Self
     }
 
     /// Get a connection to an endpoint
