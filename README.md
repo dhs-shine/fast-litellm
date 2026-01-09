@@ -110,6 +110,27 @@ python scripts/run_benchmarks.py --iterations 200
 
 See [BENCHMARK.md](BENCHMARK.md) for detailed results.
 
+## Proxy Mode (Gunicorn)
+
+Fast LiteLLM works with LiteLLM's proxy server. When using gunicorn, the easiest approach is to create a small wrapper module and use the `--preload` flag.
+
+**Create `app.py`:**
+
+```python
+import fast_litellm  # Apply acceleration before litellm loads
+from litellm.proxy.proxy_server import app
+```
+
+**Run with gunicorn:**
+
+```bash
+gunicorn app:app --preload -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:4000
+```
+
+The `--preload` flag ensures fast_litellm patches litellm in the master process before workers fork, so all workers inherit the accelerated components.
+
+For more deployment options (Docker, systemd, config files), see the [Proxy Integration Guide](docs/proxy-integration.md).
+
 ## Configuration
 
 Fast LiteLLM works out of the box with zero configuration. For advanced use cases, you can configure behavior via environment variables:
@@ -196,6 +217,7 @@ This ensures Fast LiteLLM doesn't break any LiteLLM functionality.
 ## Documentation
 
 - [API Reference](docs/api.md) - Complete API documentation
+- [Proxy Integration Guide](docs/proxy-integration.md) - Using with LiteLLM proxy and gunicorn
 - [Contributing Guide](docs/contributing.md) - Development setup and guidelines
 - [Troubleshooting Guide](TROUBLESHOOTING.md) - Common issues and solutions
 
